@@ -12,7 +12,7 @@ Grab a key. Open the door. Escape!
 ## 🎮 How to Play
 
 1. Download or clone this repo
-2. Open `collect-a-key.html` in any modern browser
+2. Open `index.html` in any modern browser
 3. No installs, no dependencies — just open and play!
 
 ---
@@ -51,8 +51,9 @@ Grab a key. Open the door. Escape!
 ## 📁 Project Structure
 
 ```
-collect-a-key/
-└── index.html   ← The entire game in one file!
+collect_a_key/
+└── index.html   ← Open this file
+└── script.js
 ```
 
 ---
