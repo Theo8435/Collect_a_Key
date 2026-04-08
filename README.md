@@ -54,6 +54,9 @@ Grab a key. Open the door. Escape!
 ```
 collect_a_key/
 └── index.html   ← Open this file
+└── levels.json
+└── script.js
+└── style.css
 ```
 
 ---
