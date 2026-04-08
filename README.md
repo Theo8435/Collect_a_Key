@@ -76,7 +76,7 @@ collect_a_key/
 
 ## 🕓 More Thing Soon
 
-- More level
+- More level ✅ (+40 levels)
 - Power up
 - Level editor
 - Main menu
