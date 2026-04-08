@@ -644,47 +644,6 @@ function drawBg(idx) {
   }
 }
 
-function drawLevelSelect() {
-    drawBg(0);
-    ctx.fillStyle = 'rgba(0,0,0,0.7)';
-    ctx.fillRect(0, 0, W, H);
-
-    ctx.textAlign = 'center';
-    ctx.fillStyle = '#ffd60a';
-    ctx.font = 'bold 30px monospace';
-    ctx.fillText('SELECT A LEVEL', W / 2, 80);
-
-    const cols = 5;
-    const size = 60;
-    const gap = 20;
-    const startX = W / 2 - ((cols * size + (cols - 1) * gap) / 2);
-    const startY = 160;
-
-    LEVELS.forEach((_, i) => {
-        const col = i % cols;
-        const row = Math.floor(i / cols);
-        const x = startX + col * (size + gap);
-        const y = startY + row * (size + gap);
-
-        // Draw Button
-        ctx.fillStyle = '#2a2a5a';
-        ctx.strokeStyle = '#ffd60a';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.roundRect(x, y, size, size, 8);
-        ctx.fill();
-        ctx.stroke();
-
-        // Level Number
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 20px monospace';
-        ctx.fillText(i + 1, x + size / 2, y + size / 2 + 7);
-    });
-
-    ctx.font = '14px monospace';
-    ctx.fillStyle = '#aaa';
-    ctx.fillText('Click a box to start', W / 2, H - 40);
-}
 
 
 
@@ -912,6 +871,49 @@ function drawMenu() {
   ctx.fillStyle = '#666688';
   ctx.fillText(LEVELS.length + ' levels  |  Collect coins for bonus points', W/2, H/2 + 100);
 }
+
+function drawLevelSelect() {
+    drawBg(0);
+    ctx.fillStyle = 'rgba(0,0,0,0.7)';
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#ffd60a';
+    ctx.font = 'bold 30px monospace';
+    ctx.fillText('SELECT A LEVEL', W / 2, 80);
+
+    const cols = 5;
+    const size = 60;
+    const gap = 20;
+    const startX = W / 2 - ((cols * size + (cols - 1) * gap) / 2);
+    const startY = 160;
+
+    LEVELS.forEach((_, i) => {
+        const col = i % cols;
+        const row = Math.floor(i / cols);
+        const x = startX + col * (size + gap);
+        const y = startY + row * (size + gap);
+
+        // Draw Button
+        ctx.fillStyle = '#2a2a5a';
+        ctx.strokeStyle = '#ffd60a';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(x, y, size, size, 8);
+        ctx.fill();
+        ctx.stroke();
+
+        // Level Number
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 20px monospace';
+        ctx.fillText(i + 1, x + size / 2, y + size / 2 + 7);
+    });
+
+    ctx.font = '14px monospace';
+    ctx.fillStyle = '#aaa';
+    ctx.fillText('Click a box to start', W / 2, H - 40);
+}
+
 
 function drawWinScreen() {
   drawBg(levelIndex);
