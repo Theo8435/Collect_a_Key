@@ -73,9 +73,7 @@ function resize() {
 window.addEventListener('resize', resize);
 resize();
 
-// ... [Keep your existing GAME STATE, PARTICLES, COLLISION, and DRAW functions here] ...
-// All functions like update(), draw(), drawPlayer(), etc. remain the same.
-// Just ensure the update() function uses the updated wasPressed() and isDown().
+
 
 // One small tweak for mobile: Allow tapping the screen to start/retry
 canvas.addEventListener('touchstart', () => {
@@ -977,7 +975,7 @@ function update(dt) {
 
   if (gameState === STATE.WIN) {
     updateParticles(dt);
-    if (wasPressed('Space','Enter')) {
+    if (wasPressed('Space','Enter','KeyW','ArrowUp')) {
       if (levelIndex + 1 < LEVELS.length) {
         initLevel(levelIndex + 1);
         gameState = STATE.PLAYING;
@@ -1288,7 +1286,13 @@ function drawHUD() {
     ctx.textAlign = 'center';
     ctx.fillStyle = '#ffd60a';
     ctx.font = '12px monospace';
-    ctx.fillText('Find the key to unlock the door!', W/2, H - 10);
+    ctx.fillText('A,D or left,right arrow key to move. W,up arrow,space to jump. Get the key!', W/2, H - 10);
+  }
+    if (hasKey) {
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#ffd60a';
+    ctx.font = '12px monospace';
+    ctx.fillText('Go to the door and exit!', W/2, H - 10);
   }
 }
 
