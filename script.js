@@ -618,7 +618,7 @@ const LEVELS = [
       { x: 300, y: 320, w: 80,  h: 16 },
       { x: 450, y: 260, w: 80,  h: 16 },
       { x: 600, y: 200, w: 150, h: 16 },  // Door platform
-      { x: 350, y: 100, w: 100, h: 16 },  // Key platform
+      { x: 375, y: 100, w: 100, h: 16 },  // Key platform
       { x: 180, y: 160, w: 80,  h: 16 },
     ],
     spikes: [
