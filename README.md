@@ -1,5 +1,5 @@
 # By Theo8435
-# 🔑 Collect a Key V1.1 out now!
+# 🔑 Collect a Key
 
 A simple browser-based platformer game built with vanilla HTML5 Canvas and JavaScript.
 
@@ -71,16 +71,6 @@ collect_a_key/
 ## 📸 Preview
 
 > Open `index.html` in your browser to see it in action!
-
----
-
-## 🕓 More Thing Soon
-
-- More level
-- Power up
-- Level editor
-- Main menu ✅
-- And much more!
 
 ---
 
