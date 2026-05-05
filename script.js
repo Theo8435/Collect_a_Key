@@ -18,729 +18,9 @@ const POWERUP_TYPES = {
 };
 
 // ════════════════════════════════════════════════════════════════
-//  LEVELS
+//  LEVELS  — loaded from levels.json at startup
 // ════════════════════════════════════════════════════════════════
-const LEVELS = [
-  // ── Level 1: Tutorial ─────────────────────────────────────────
-  {
-    bgTop: '#0a0a2e', bgBot: '#0d0d1a',
-    playerStart: { x: 50, y: 390 }, //player start position
-    door:        { x: 700, y: 360 }, //door position
-    key:         { x: 380, y: 310 }, //key position
-    platforms: [  //set of platforms
-      { x: 0,   y: 440, w: 800, h: 60 },
-      { x: 200, y: 370, w: 160, h: 16 },
-      { x: 420, y: 340, w: 160, h: 16 },
-      { x: 640, y: 370, w: 160, h: 60 },
-    ],
-    spikes: [],  //set od spike
-    coins: [{ x: 260, y: 345 }, { x: 500, y: 315 }, { x: 700, y: 345 }],  //set of coins
-  },
-
-  // ── Level 2: First Gaps ────────────────────────────────────────
-  {
-    bgTop: '#0a1230', bgBot: '#0d0d1a',
-    playerStart: { x: 50, y: 390 },
-    door:        { x: 710, y: 250 }, // Lowered door slightly for reach
-    key:         { x: 390, y: 240 },
-    platforms: [
-      { x: 0,   y: 440, w: 260, h: 60 },
-      { x: 340, y: 440, w: 200, h: 60 },
-      { x: 620, y: 440, w: 180, h: 60 },
-      { x: 150, y: 355, w: 120, h: 16 },
-      { x: 330, y: 270, w: 130, h: 16 },
-      { x: 650, y: 310, w: 110, h: 16 }, // Adjusted Y from 340 to 310
-    ],
-    spikes: [],
-    coins: [{ x: 210, y: 325 }, { x: 395, y: 415 }, { x: 680, y: 250 }],
-  },
-
-  // ── Level 3: Spike Intro ───────────────────────────────────────
-  {
-    bgTop: '#0a1e2e', bgBot: '#0d1515',
-    playerStart: { x: 50, y: 390 },
-    door:        { x: 710, y: 310 }, // Door moved to the platform
-    key:         { x: 390, y: 290 },
-    platforms: [
-      { x: 0,   y: 440, w: 800, h: 60 },
-      { x: 160, y: 370, w: 120, h: 16 },
-      { x: 340, y: 320, w: 120, h: 16 },
-      { x: 540, y: 370, w: 120, h: 16 },
-      { x: 650, y: 370, w: 150, h: 60 },
-    ],
-    spikes: [
-      { x: 290, y: 423, w: 42, h: 17 },
-      { x: 465, y: 423, w: 42, h: 17 },
-    ],
-    coins: [{ x: 220, y: 345 }, { x: 400, y: 295 }, { x: 600, y: 345 }],
-  },
-
-  // ── Level 4: Climb Up ─────────────────────────────────────────
-  {
-    bgTop: '#0a2010', bgBot: '#0d1a0d',
-    playerStart: { x: 50, y: 390 },
-    door:        { x: 30, y: 190 }, // Adjusted door X for better platform fit
-    key:         { x: 680, y: 120 },
-    platforms: [
-      { x: 0,   y: 440, w: 800, h: 60 },
-      { x: 0,   y: 250, w: 100, h: 16 },
-      { x: 160, y: 370, w: 110, h: 16 },
-      { x: 310, y: 300, w: 110, h: 16 },
-      { x: 460, y: 230, w: 110, h: 16 },
-      { x: 610, y: 160, w: 130, h: 16 },
-      { x: 460, y: 160, w: 100, h: 16 },
-      { x: 310, y: 195, w: 100, h: 16 }, // Flattened the zigzag descent
-      { x: 140, y: 230, w: 100, h: 16 },
-    ],
-    spikes: [{ x: 270, y: 423, w: 28, h: 17 }, { x: 420, y: 423, w: 28, h: 17 }],
-    coins: [{ x: 215, y: 345 }, { x: 365, y: 275 }, { x: 515, y: 205 }, { x: 665, y: 135 }],
-  },
-
-  // ── Level 5: Island Hopping ───────────────────────────────────
-  {
-    bgTop: '#1a0a30', bgBot: '#100d20',
-    playerStart: { x: 30, y: 360 },
-    door:        { x: 705, y: 210 }, // Door moved up to the platform
-    key:         { x: 390, y: 160 },
-    platforms: [
-      { x: 0,   y: 400, w: 110, h: 60 },
-      { x: 160, y: 360, w: 90,  h: 16 },
-      { x: 300, y: 310, w: 90,  h: 16 },
-      { x: 350, y: 190, w: 110, h: 16 },
-      { x: 490, y: 270, w: 90,  h: 16 },
-      { x: 620, y: 300, w: 100, h: 16 },
-      { x: 670, y: 270, w: 130, h: 60 },
-    ],
-    spikes: [
-      { x: 160, y: 343, w: 28, h: 17 },
-    ],
-    coins: [{ x: 55,  y: 370 }, { x: 405, y: 160 }, { x: 535, y: 240 }],
-  },
-
-  // ── Level 6: Descent ──────────────────────────────────────────
-  {
-    bgTop: '#200a10', bgBot: '#150a0a',
-    playerStart: { x: 50, y: 70 },
-    door:        { x: 700, y: 50 },
-    key:         { x: 390, y: 390 },
-    platforms: [
-      { x: 0,   y: 110, w: 130, h: 16 },
-      { x: 670, y: 110, w: 130, h: 16 },
-      { x: 0,   y: 440, w: 800, h: 60 },
-      { x: 170, y: 190, w: 100, h: 16 },
-      { x: 310, y: 270, w: 100, h: 16 },
-      { x: 450, y: 190, w: 100, h: 16 },
-      { x: 590, y: 270, w: 100, h: 16 },
-      { x: 170, y: 350, w: 100, h: 16 },
-      { x: 590, y: 350, w: 100, h: 16 },
-    ],
-    spikes: [{ x: 270, y: 423, w: 42, h: 17 }, { x: 430, y: 423, w: 56, h: 17 }],
-    coins: [{ x: 220, y: 165 }, { x: 360, y: 245 }, { x: 500, y: 165 }],
-  },
-
-  // ── Level 7: Gauntlet ─────────────────────────────────────────
-  {
-    bgTop: '#1e1000', bgBot: '#150d00',
-    playerStart: { x: 50, y: 390 },
-    door:        { x: 700, y: 165 }, // Adjusted door Y
-    key:         { x: 50,  y: 120 },
-    platforms: [
-      { x: 0,   y: 440, w: 200, h: 60 },
-      { x: 0,   y: 150, w: 130, h: 16 },
-      { x: 170, y: 250, w: 90,  h: 16 },
-      { x: 300, y: 330, w: 90,  h: 16 },
-      { x: 430, y: 250, w: 90,  h: 16 },
-      { x: 560, y: 170, w: 90,  h: 16 },
-      { x: 650, y: 225, w: 150, h: 60 },
-    ],
-    spikes: [
-      { x: 170, y: 233, w: 28, h: 17 },
-    ],
-    coins: [{ x: 65,  y: 390 }, { x: 345, y: 300 }, { x: 605, y: 140 }],
-  },
-
-  // ── Level 8: Zigzag ───────────────────────────────────────────
-  {
-    bgTop: '#001e1e', bgBot: '#000d0d',
-    playerStart: { x: 50, y: 390 },
-    door:        { x: 680, y: 380 },
-    key:         { x: 390, y: 70 },
-    platforms: [
-      { x: 0,   y: 440, w: 170, h: 60 },
-      { x: 630, y: 440, w: 170, h: 60 },
-      { x: 0,   y: 350, w: 130, h: 16 },
-      { x: 180, y: 290, w: 100, h: 16 },
-      { x: 330, y: 230, w: 100, h: 16 },
-      { x: 180, y: 170, w: 100, h: 16 },
-      { x: 330, y: 100, w: 160, h: 16 },
-      { x: 530, y: 160, w: 100, h: 16 },
-      { x: 660, y: 220, w: 100, h: 16 },
-      { x: 530, y: 290, w: 100, h: 16 },
-      { x: 660, y: 350, w: 100, h: 16 },
-    ],
-    spikes: [{ x: 430, y: 143, w: 96, h: 17 }],
-    coins: [{ x: 65,  y: 415 }, { x: 405, y: 70  }, { x: 705, y: 415 }],
-  },
-
-  // ── Level 9: Spike Garden ─────────────────────────────────────
-  {
-    bgTop: '#1a001a', bgBot: '#0d000d',
-    playerStart: { x: 50, y: 100 },
-    door:        { x: 680, y: 80 },
-    key:         { x: 390, y: 340 },
-    platforms: [
-      { x: 0,   y: 140, w: 130, h: 16 },
-      { x: 670, y: 140, w: 130, h: 16 },
-      { x: 0,   y: 440, w: 800, h: 60 },
-      { x: 160, y: 220, w: 80,  h: 16 },
-      { x: 290, y: 300, w: 80,  h: 16 },
-      { x: 360, y: 370, w: 100, h: 16 },
-      { x: 430, y: 300, w: 80,  h: 16 },
-      { x: 560, y: 220, w: 80,  h: 16 },
-      { x: 160, y: 350, w: 80,  h: 16 },
-      { x: 560, y: 350, w: 80,  h: 16 },
-    ],
-    spikes: [
-      { x: 130, y: 423, w: 200, h: 17 },
-      { x: 450, y: 423, w: 200, h: 17 },
-      { x: 240, y: 283, w: 42,  h: 17 },
-      { x: 480, y: 283, w: 42,  h: 17 },
-    ],
-    coins: [{ x: 65,  y: 110 }, { x: 410, y: 340 }, { x: 710, y: 110 }],
-  },
-
-  // ── Level 10: Final Test ─────────────────────────────────────
-  {
-    bgTop: '#1a0020', bgBot: '#0d0010',
-    playerStart: { x: 50, y: 390 },
-    door:        { x: 370, y: 30 },
-    key:         { x: 680, y: 390 },
-    platforms: [
-      { x: 0,   y: 440, w: 150, h: 60 },
-      { x: 620, y: 440, w: 180, h: 60 },
-      { x: 200, y: 380, w: 80,  h: 16 },
-      { x: 330, y: 320, w: 80,  h: 16 },
-      { x: 460, y: 380, w: 80,  h: 16 },
-      { x: 570, y: 310, w: 80,  h: 16 },
-      { x: 460, y: 240, w: 80,  h: 16 },
-      { x: 330, y: 170, w: 80,  h: 16 },
-      { x: 200, y: 240, w: 80,  h: 16 },
-      { x: 310, y: 90,  w: 160, h: 16 },
-      { x: 80,  y: 300, w: 80,  h: 16 },
-      { x: 80,  y: 170, w: 80,  h: 16 },
-    ],
-    spikes: [
-      { x: 150, y: 423, w: 56,  h: 17 },
-      { x: 280, y: 423, w: 56,  h: 17 },
-      { x: 410, y: 423, w: 56,  h: 17 },
-    ],
-    coins: [{ x: 75,  y: 410 }, { x: 700, y: 410 }],
-  },
-
-  // ── Level 11: Staircase ───────────────────────────────────────
-  {
-    bgTop: '#0a1a2e', bgBot: '#060d1a',
-    playerStart: { x: 30, y: 410 },
-    door:        { x: 720, y: 50 },
-    key:         { x: 400, y: 230 },
-    platforms: [
-      { x: 0,   y: 440, w: 120, h: 60 },
-      { x: 100, y: 390, w: 100, h: 16 },
-      { x: 180, y: 340, w: 100, h: 16 },
-      { x: 260, y: 290, w: 100, h: 16 },
-      { x: 340, y: 240, w: 100, h: 16 },
-      { x: 420, y: 190, w: 100, h: 16 },
-      { x: 500, y: 140, w: 100, h: 16 },
-      { x: 580, y: 90,  w: 100, h: 16 },
-      { x: 680, y: 90,  w: 120, h: 60 },
-    ],
-    spikes: [
-      { x: 120, y: 423, w: 56, h: 17 },
-      { x: 440, y: 423, w: 42, h: 17 },
-    ],
-    coins: [{ x: 150, y: 360 }, { x: 370, y: 215 }, { x: 630, y: 65 }],
-  },
-
-  // ── Level 12: The Pit ─────────────────────────────────────────
-  {
-    bgTop: '#1a0a0a', bgBot: '#0d0505',
-    playerStart: { x: 30, y: 80 },
-    door:        { x: 710, y: 432 },
-    key:         { x: 390, y: 430 },
-    platforms: [
-      { x: 0,   y: 110, w: 130, h: 16 },
-      { x: 670, y: 110, w: 130, h: 16 },
-      { x: 0,   y: 440, w: 130, h: 60 },
-      { x: 670, y: 440, w: 130, h: 60 },
-      { x: 200, y: 200, w: 80,  h: 16 },
-      { x: 340, y: 290, w: 120, h: 16 },
-      { x: 520, y: 200, w: 80,  h: 16 },
-      { x: 310, y: 420, w: 180, h: 60 },
-    ],
-    spikes: [
-      { x: 130, y: 423, w: 180, h: 17 },
-      { x: 490, y: 423, w: 180, h: 17 },
-    ],
-    coins: [{ x: 55, y: 80 }, { x: 400, y: 265 }, { x: 735, y: 80 }],
-  },
-
-  // ── Level 13: Corridor ────────────────────────────────────────
-  {
-    bgTop: '#0d1a0a', bgBot: '#060d05',
-    playerStart: { x: 30, y: 200 },
-    door:        { x: 715, y: 200 },
-    key:         { x: 390, y: 420 },
-    platforms: [
-      { x: 0,   y: 230, w: 120, h: 16 },
-      { x: 680, y: 230, w: 120, h: 16 },
-      { x: 0,   y: 440, w: 800, h: 60 },
-      { x: 150, y: 340, w: 80,  h: 16 },
-      { x: 280, y: 380, w: 80,  h: 16 },
-      { x: 350, y: 410, w: 100, h: 60 },
-      { x: 440, y: 380, w: 80,  h: 16 },
-      { x: 570, y: 340, w: 80,  h: 16 },
-      { x: 130, y: 170, w: 80,  h: 16 },
-      { x: 590, y: 170, w: 80,  h: 16 },
-    ],
-    spikes: [
-      { x: 210, y: 323, w: 56, h: 17 },
-      { x: 534, y: 323, w: 56, h: 17 },
-    ],
-    coins: [{ x: 60, y: 200 }, { x: 400, y: 385 }, { x: 740, y: 200 }],
-  },
-
-  // ── Level 14: Double Jump Practice ───────────────────────────
-  {
-    bgTop: '#1a1000', bgBot: '#0d0800',
-    playerStart: { x: 30, y: 400 },
-    door:        { x: 680, y: 310 },
-    key:         { x: 200, y: 100 },
-    platforms: [
-      { x: 0,   y: 440, w: 130, h: 60 },
-      { x: 200, y: 350, w: 80,  h: 16 },
-      { x: 350, y: 280, w: 80,  h: 16 },
-      { x: 130, y: 130, w: 130, h: 16 },
-      { x: 310, y: 190, w: 80,  h: 16 },
-      { x: 460, y: 130, w: 80,  h: 16 },
-      { x: 600, y: 200, w: 80,  h: 16 },
-      { x: 650, y: 370, w: 150, h: 60 },
-    ],
-    spikes: [
-      { x: 280, y: 423, w: 70, h: 17 },
-      { x: 470, y: 423, w: 70, h: 17 },
-    ],
-    coins: [{ x: 240, y: 110 }, { x: 390, y: 255 }, { x: 635, y: 175 }],
-  },
-
-  // ── Level 15: The Bridge ──────────────────────────────────────
-  {
-    bgTop: '#001a1a', bgBot: '#000d0d',
-    playerStart: { x: 30, y: 70 },
-    door:        { x: 715, y: 70 },
-    key:         { x: 390, y: 390 },
-    platforms: [
-      { x: 0,   y: 110, w: 140, h: 60 },
-      { x: 660, y: 110, w: 140, h: 60 },
-      { x: 0,   y: 440, w: 180, h: 60 },
-      { x: 620, y: 440, w: 180, h: 60 },
-      { x: 140, y: 200, w: 80,  h: 16 },
-      { x: 260, y: 270, w: 80,  h: 16 },
-      { x: 340, y: 380, w: 120, h: 60 },
-      { x: 460, y: 270, w: 80,  h: 16 },
-      { x: 580, y: 200, w: 80,  h: 16 },
-      { x: 220, y: 160, w: 80,  h: 16 },
-      { x: 500, y: 160, w: 80,  h: 16 },
-    ],
-    spikes: [
-      { x: 180, y: 423, w: 160, h: 17 },
-      { x: 460, y: 423, w: 160, h: 17 },
-    ],
-    coins: [{ x: 60, y: 80 }, { x: 400, y: 355 }, { x: 740, y: 80 }],
-  },
-
-  // ── Level 16: Spike Alley ─────────────────────────────────────
-  {
-    bgTop: '#200010', bgBot: '#100008',
-    playerStart: { x: 30, y: 300 },
-    door:        { x: 450, y: 390 },
-    key:         { x: 390, y: 90 },
-    platforms: [
-      { x: 0,   y: 440, w: 130, h: 60 },
-      { x: 660, y: 440, w: 140, h: 60 },
-      { x: 0,   y: 320, w: 80,  h: 16 },
-      { x: 140, y: 240, w: 80,  h: 16 },
-      { x: 280, y: 160, w: 80,  h: 16 },
-      { x: 360, y: 110, w: 80,  h: 16 },
-      { x: 440, y: 160, w: 80,  h: 16 },
-      { x: 580, y: 240, w: 80,  h: 16 },
-      { x: 720, y: 320, w: 80,  h: 16 },
-    ],
-    spikes: [
-      { x: 520, y: 223, w: 56, h: 17 },
-      { x: 660, y: 303, w: 56, h: 17 },
-    ],
-    coins: [{ x: 55, y: 410 }, { x: 400, y: 85 }, { x: 745, y: 410 }],
-  },
-
-  // ── Level 17: High Road ───────────────────────────────────────
-  {
-    bgTop: '#0a0a30', bgBot: '#050520',
-    playerStart: { x: 30, y: 390 },
-    door:        { x: 50, y: 50 },
-    key:         { x: 720, y: 50 },
-    platforms: [
-      { x: 0,   y: 440, w: 120, h: 60 },
-      { x: 0,   y: 100, w: 120, h: 16 },
-      { x: 680, y: 100, w: 120, h: 16 },
-      { x: 140, y: 370, w: 80,  h: 16 },
-      { x: 260, y: 310, w: 80,  h: 16 },
-      { x: 380, y: 250, w: 80,  h: 16 },
-      { x: 500, y: 180, w: 80,  h: 16 },
-      { x: 600, y: 120, w: 80,  h: 16 },
-      { x: 380, y: 180, w: 80,  h: 16 },
-      { x: 260, y: 130, w: 80,  h: 16 },
-      { x: 140, y: 190, w: 80,  h: 16 },
-    ],
-    spikes: [
-      { x: 340, y: 423, w: 120, h: 17 },
-    ],
-    coins: [{ x: 55, y: 410 }, { x: 420, y: 225 }, { x: 740, y: 70 }],
-  },
-
-  // ── Level 18: The Comb ────────────────────────────────────────
-  {
-    bgTop: '#10001a', bgBot: '#08000d',
-    playerStart: { x: 30, y: 80 },
-    door:        { x: 715, y: 80 },
-    key:         { x: 390, y: 355 },
-    platforms: [
-      { x: 0,   y: 110, w: 130, h: 16 },
-      { x: 670, y: 110, w: 130, h: 16 },
-      { x: 0,   y: 440, w: 800, h: 60 },
-      { x: 110, y: 340, w: 60,  h: 100 },
-      { x: 230, y: 280, w: 60,  h: 160 },
-      { x: 350, y: 380, w: 80,  h: 60 },
-      { x: 490, y: 280, w: 60,  h: 160 },
-      { x: 610, y: 340, w: 60,  h: 100 },
-      { x: 160, y: 200, w: 80,  h: 16 },
-      { x: 520, y: 200, w: 80,  h: 16 },
-    ],
-    spikes: [
-      { x: 170, y: 323, w: 56, h: 17 },
-      { x: 390, y: 363, w: 42, h: 17 },
-      { x: 550, y: 263, w: 56, h: 17 },
-    ],
-    coins: [{ x: 55, y: 80 }, { x: 400, y: 355 }, { x: 740, y: 80 }],
-  },
-
-  // ── Level 19: The Shelf ───────────────────────────────────────
-  {
-    bgTop: '#0a1e00', bgBot: '#050f00',
-    playerStart: { x: 30, y: 390 },
-    door:        { x: 715, y: 130 },
-    key:         { x: 390, y: 310 },
-    platforms: [
-      { x: 0,   y: 440, w: 800, h: 60 },
-      { x: 0,   y: 330, w: 200, h: 16 },
-      { x: 250, y: 270, w: 200, h: 16 },
-      { x: 350, y: 330, w: 100, h: 16 },
-      { x: 500, y: 270, w: 80,  h: 16 },
-      { x: 600, y: 210, w: 80,  h: 16 },
-      { x: 680, y: 190, w: 120, h: 16 },
-      { x: 150, y: 210, w: 80,  h: 16 },
-      { x: 300, y: 150, w: 80,  h: 16 },
-      { x: 450, y: 150, w: 80,  h: 16 },
-    ],
-    spikes: [
-      { x: 200, y: 313, w: 50, h: 17 },
-      { x: 580, y: 253, w: 20, h: 17 },
-    ],
-    coins: [{ x: 55, y: 410 }, { x: 400, y: 285 }, { x: 730, y: 165 }],
-  },
-
-  // ── Level 20: Speed Run ───────────────────────────────────────
-  {
-    bgTop: '#200a00', bgBot: '#100500',
-    playerStart: { x: 30, y: 390 },
-    door:        { x: 720, y: 390 },
-    key:         { x: 390, y: 130 },
-    platforms: [
-      { x: 0,   y: 440, w: 120, h: 60 },
-      { x: 660, y: 440, w: 140, h: 60 },
-      { x: 100, y: 370, w: 80,  h: 16 },
-      { x: 220, y: 310, w: 80,  h: 16 },
-      { x: 340, y: 250, w: 80,  h: 16 },
-      { x: 460, y: 190, w: 80,  h: 16 },
-      { x: 340, y: 130, w: 130, h: 16 },
-      { x: 580, y: 190, w: 80,  h: 16 },
-      { x: 620, y: 300, w: 80,  h: 16 },
-      { x: 580, y: 370, w: 80,  h: 16 },
-    ],
-    spikes: [
-      { x: 180, y: 293, w: 36, h: 17 },
-      { x: 300, y: 233, w: 36, h: 17 },
-    ],
-    coins: [{ x: 55, y: 415 }, { x: 400, y: 105 }, { x: 735, y: 415 }],
-  },
-
-  // ── Level 21: Labyrinth ───────────────────────────────────────
-  {
-    bgTop: '#001020', bgBot: '#000810',
-    playerStart: { x: 30, y: 390 },
-    door:        { x: 715, y: 80 },
-    key:         { x: 30,  y: 80 },
-    platforms: [
-      { x: 0,   y: 440, w: 800, h: 60 },
-      { x: 0,   y: 110, w: 130, h: 16 },
-      { x: 670, y: 110, w: 130, h: 16 },
-      { x: 0,   y: 280, w: 200, h: 16 },
-      { x: 600, y: 280, w: 200, h: 16 },
-      { x: 100, y: 200, w: 80,  h: 16 },
-      { x: 620, y: 200, w: 80,  h: 16 },
-      { x: 250, y: 360, w: 80,  h: 16 },
-      { x: 470, y: 360, w: 80,  h: 16 },
-      { x: 320, y: 290, w: 160, h: 16 },
-      { x: 350, y: 200, w: 100, h: 16 },
-      { x: 250, y: 150, w: 80,  h: 16 },
-      { x: 470, y: 150, w: 80,  h: 16 },
-    ],
-    spikes: [
-      { x: 200, y: 343, w: 42, h: 17 },
-      { x: 560, y: 343, w: 42, h: 17 },
-    ],
-    coins: [{ x: 55, y: 80 }, { x: 400, y: 170 }, { x: 735, y: 80 }],
-  },
-
-  // ── Level 22: Reverse Climb ───────────────────────────────────
-  {
-    bgTop: '#1a1a00', bgBot: '#0d0d00',
-    playerStart: { x: 30, y: 70 },
-    door:        { x: 715, y: 400 },
-    key:         { x: 390, y: 420 },
-    platforms: [
-      { x: 0,   y: 110, w: 130, h: 16 },
-      { x: 0,   y: 440, w: 800, h: 60 },
-      { x: 130, y: 190, w: 80,  h: 16 },
-      { x: 260, y: 270, w: 80,  h: 16 },
-      { x: 390, y: 350, w: 80,  h: 16 },
-      { x: 530, y: 270, w: 80,  h: 16 },
-      { x: 650, y: 200, w: 80,  h: 16 },
-      { x: 660, y: 440, w: 140, h: 60 },
-      { x: 330, y: 420, w: 140, h: 60 },
-    ],
-    spikes: [
-      { x: 200, y: 423, w: 130, h: 17 },
-      { x: 470, y: 423, w: 60,  h: 17 },
-    ],
-    coins: [{ x: 55, y: 80 }, { x: 420, y: 325 }, { x: 700, y: 175 }],
-  },
-
-  // ── Level 23: Stepping Stones ─────────────────────────────────
-  {
-    bgTop: '#000a20', bgBot: '#000510',
-    playerStart: { x: 20, y: 390 },
-    door:        { x: 740, y: 80 },
-    key:         { x: 390, y: 200 },
-    platforms: [
-      { x: 0,   y: 440, w: 80,  h: 60 },
-      { x: 720, y: 110, w: 80,  h: 60 },
-      { x: 120, y: 400, w: 60,  h: 16 },
-      { x: 220, y: 360, w: 60,  h: 16 },
-      { x: 320, y: 310, w: 60,  h: 16 },
-      { x: 420, y: 250, w: 60,  h: 16 },
-      { x: 360, y: 200, w: 60,  h: 16 },
-      { x: 500, y: 180, w: 60,  h: 16 },
-      { x: 600, y: 230, w: 60,  h: 16 },
-      { x: 660, y: 180, w: 60,  h: 16 },
-      { x: 280, y: 390, w: 60,  h: 16 },
-    ],
-    spikes: [
-      { x: 80,  y: 423, w: 40, h: 17 },
-      { x: 450, y: 423, w: 70, h: 17 },
-    ],
-    coins: [{ x: 145, y: 375 }, { x: 400, y: 175 }, { x: 755, y: 80 }],
-  },
-
-  // ── Level 24: Twin Towers ─────────────────────────────────────
-  {
-    bgTop: '#0a001a', bgBot: '#05000d',
-    playerStart: { x: 30, y: 390 },
-    door:        { x: 715, y: 200 },
-    key:         { x: 390, y: 80 },
-    platforms: [
-      { x: 0,   y: 440, w: 120, h: 60 },
-      { x: 680, y: 260, w: 120, h: 60 },
-      { x: 0,   y: 340, w: 80,  h: 16 },
-      { x: 0,   y: 240, w: 80,  h: 16 },
-      { x: 0,   y: 140, w: 80,  h: 16 },
-      { x: 720, y: 140, w: 80,  h: 16 },
-      { x: 720, y: 340, w: 80,  h: 16 },
-      { x: 150, y: 100, w: 500, h: 16 },
-      { x: 200, y: 200, w: 80,  h: 16 },
-      { x: 520, y: 200, w: 80,  h: 16 },
-      { x: 340, y: 290, w: 120, h: 16 },
-    ],
-    spikes: [
-      { x: 280, y: 83, w: 60, h: 17 },
-      { x: 460, y: 83, w: 60, h: 17 },
-    ],
-    coins: [{ x: 40, y: 310 }, { x: 400, y: 260 }, { x: 740, y: 310 }],
-  },
-
-  // ── Level 25: Halfway Hell ────────────────────────────────────
-  {
-    bgTop: '#200000', bgBot: '#100000',
-    playerStart: { x: 30, y: 390 },
-    door:        { x: 715, y: 390 },
-    key:         { x: 390, y: 70 },
-    platforms: [
-      { x: 0,   y: 440, w: 120, h: 60 },
-      { x: 660, y: 440, w: 140, h: 60 },
-      { x: 100, y: 360, w: 60,  h: 16 },
-      { x: 210, y: 300, w: 60,  h: 16 },
-      { x: 320, y: 240, w: 60,  h: 16 },
-      { x: 360, y: 110, w: 80,  h: 16 },
-      { x: 420, y: 240, w: 60,  h: 16 },
-      { x: 530, y: 300, w: 60,  h: 16 },
-      { x: 640, y: 360, w: 60,  h: 16 },
-      { x: 230, y: 170, w: 60,  h: 16 },
-      { x: 510, y: 170, w: 60,  h: 16 },
-    ],
-    spikes: [
-      { x: 160, y: 343, w: 42, h: 17 },
-      { x: 270, y: 283, w: 42, h: 17 },
-      { x: 488, y: 283, w: 42, h: 17 },
-      { x: 596, y: 343, w: 42, h: 17 },
-    ],
-    coins: [{ x: 55, y: 415 }, { x: 400, y: 85 }, { x: 735, y: 415 }],
-  },
-
-  // ── Level 26: The Precision Leap ─────────────────────────────
-  {
-    bgTop: '#1a0a2e', bgBot: '#050515',
-    playerStart: { x: 40, y: 390 },
-    door:        { x: 720, y: 150 },
-    key:         { x: 400, y: 50 },
-    platforms: [
-      { x: 0,   y: 440, w: 100, h: 60 },  // Start platform
-      { x: 150, y: 380, w: 80,  h: 16 },
-      { x: 300, y: 320, w: 80,  h: 16 },
-      { x: 450, y: 260, w: 80,  h: 16 },
-      { x: 600, y: 200, w: 150, h: 16 },  // Door platform
-      { x: 375, y: 100, w: 100, h: 16 },  // Key platform
-      { x: 180, y: 160, w: 80,  h: 16 },
-    ],
-    spikes: [
-      { x: 100, y: 423, w: 700, h: 17 },  // Large floor spike pit
-      { x: 450, y: 243, w: 30,  h: 17 },  // Hazard on a middle platform
-    ],
-    coins: [
-      { x: 190, y: 355 }, 
-      { x: 340, y: 295 }, 
-      { x: 700, y: 175 }
-    ],
-  },
-
-  // ── Level 27: The Funnel ──────────────────────────────────────
-  {
-    bgTop: '#1a1000', bgBot: '#0d0800',
-    playerStart: { x: 30, y: 70 },
-    door:        { x: 370, y: 410 },
-    key:         { x: 715, y: 70 },
-    platforms: [
-      { x: 0,   y: 110, w: 130, h: 16 },
-      { x: 670, y: 110, w: 130, h: 16 },
-      { x: 340, y: 440, w: 120, h: 60 },
-      { x: 100, y: 200, w: 100, h: 16 },
-      { x: 600, y: 200, w: 100, h: 16 },
-      { x: 180, y: 290, w: 100, h: 16 },
-      { x: 520, y: 290, w: 100, h: 16 },
-      { x: 260, y: 370, w: 100, h: 16 },
-      { x: 440, y: 370, w: 100, h: 16 },
-    ],
-    spikes: [
-      { x: 200, y: 273, w: 56, h: 17 },
-      { x: 544, y: 273, w: 56, h: 17 },
-    ],
-    coins: [{ x: 55, y: 80 }, { x: 400, y: 415 }, { x: 740, y: 80 }],
-  },
-
-  // ── Level 28: Canopy ──────────────────────────────────────────
-  {
-    bgTop: '#002010', bgBot: '#001508',
-    playerStart: { x: 30, y: 390 },
-    door:        { x: 715, y: 390 },
-    key:         { x: 390, y: 60 },
-    platforms: [
-      { x: 0,   y: 440, w: 140, h: 60 },
-      { x: 660, y: 440, w: 140, h: 60 },
-      { x: 120, y: 350, w: 80,  h: 16 },
-      { x: 240, y: 270, w: 80,  h: 16 },
-      { x: 360, y: 190, w: 80,  h: 16 },
-      { x: 480, y: 270, w: 80,  h: 16 },
-      { x: 600, y: 350, w: 80,  h: 16 },
-      { x: 300, y: 140, w: 80,  h: 16 },
-      { x: 420, y: 140, w: 80,  h: 16 },
-    ],
-    spikes: [
-      { x: 200, y: 63, w: 160, h: 17 },
-      { x: 440, y: 63, w: 160, h: 17 },
-    ],
-    coins: [{ x: 55, y: 415 }, { x: 400, y: 165 }, { x: 740, y: 415 }],
-  },
-
-  // ── Level 29: Mirror ──────────────────────────────────────────
-  {
-    bgTop: '#0a001a', bgBot: '#05000d',
-    playerStart: { x: 30, y: 390 },
-    door:        { x: 715, y: 80 },
-    key:         { x: 715, y: 390 },
-    platforms: [
-      { x: 0,   y: 440, w: 120, h: 60 },
-      { x: 660, y: 440, w: 140, h: 60 },
-      { x: 680, y: 110, w: 120, h: 16 },
-      { x: 100, y: 370, w: 80,  h: 16 },
-      { x: 240, y: 310, w: 80,  h: 16 },
-      { x: 380, y: 250, w: 80,  h: 16 },
-      { x: 520, y: 310, w: 80,  h: 16 },
-      { x: 660, y: 370, w: 80,  h: 16 },
-      { x: 540, y: 190, w: 80,  h: 16 },
-      { x: 400, y: 130, w: 80,  h: 16 },
-      { x: 260, y: 190, w: 80,  h: 16 },
-      { x: 120, y: 250, w: 80,  h: 16 },
-    ],
-    spikes: [
-      { x: 564, y: 293, w: 56, h: 17 },
-    ],
-    coins: [{ x: 55, y: 415 }, { x: 420, y: 225 }, { x: 735, y: 415 }],
-  },
-
-  // ── Level 30: Triple Gauntlet ─────────────────────────────────
-  {
-    bgTop: '#200010', bgBot: '#100008',
-    playerStart: { x: 300, y: 100 },
-    door:        { x: 715, y: 130 },
-    key:         { x: 390, y: 390 },
-    platforms: [
-      { x: 0,   y: 440, w: 120, h: 60 },
-      { x: 680, y: 170, w: 120, h: 60 },
-      { x: 340, y: 440, w: 120, h: 60 },
-      { x: 120, y: 340, w: 80,  h: 16 },
-      { x: 240, y: 270, w: 80,  h: 16 },
-      { x: 160, y: 190, w: 80,  h: 16 },
-      { x: 280, y: 130, w: 80,  h: 16 },
-      { x: 400, y: 340, w: 80,  h: 16 },
-      { x: 520, y: 270, w: 80,  h: 16 },
-      { x: 430, y: 190, w: 80,  h: 16 },
-      { x: 550, y: 130, w: 80,  h: 16 },
-    ],
-    spikes: [
-      { x: 120, y: 323, w: 56, h: 17 },
-      { x: 300, y: 253, w: 56, h: 17 },
-    ],
-    coins: [{ x: 55, y: 415 }, { x: 400, y: 415 }, { x: 730, y: 145 }],
-  },
-]
+let LEVELS = []; // filled by loadLevels() before game loop starts
 
 const canvas = document.getElementById('gameCanvas');
 const ctx    = canvas.getContext('2d');
@@ -866,37 +146,22 @@ resize();
 // ════════════════════════════════════════════════════════════════
 //  GAME STATE
 // ════════════════════════════════════════════════════════════════
-const STATE = { MENU: 'menu', LEVEL_SELECT: 'levelSelect', PLAYING: 'playing', WIN: 'win', DEAD: 'dead', EDITOR_AUTH: 'editorAuth', EDITOR: 'editor' };
+const STATE = { MENU: 'menu', LEVEL_SELECT: 'levelSelect', PLAYING: 'playing', WIN: 'win', DEAD: 'dead', EDITOR: 'editor' };
 let gameState = STATE.MENU;
 
-// ── Dev key hash (djb2 of "Hello world") ─────────────────────────
-// Hash is computed at definition time — plaintext never stored
-const DEV_KEY_HASH = (function(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h)^s.charCodeAt(i);return h>>>0;})('Hello world'); // 2802020820
-function hashInput(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h)^s.charCodeAt(i);return h>>>0;}
-
 // ── Editor state ─────────────────────────────────────────────────
-let editorUnlocked = false;
-let edAuthInput = '';
-let edAuthShake = 0;       // shake timer on wrong pass
-let edAuthCursor = 0;      // blinking cursor timer
-
-// Editor working data
-let edLevels = [];         // deep copy of LEVELS + custom
-let edIdx = 0;             // currently edited level index
-let edTool = 'platform';   // active tool
-let edDrag = null;         // { start:{x,y}, cur:{x,y} }
-let edSelItem = null;      // { type, obj } for select/move
+// Editor is create-only: edLevels holds only user-created custom levels
+let edLevels = [];
+let edIdx = 0;
+let edTool = 'platform';
+let edDrag = null;
+let edSelItem = null;
 let edSelOffset = {x:0,y:0};
 let edSnapSize = 16;
 let edSnapOn = true;
 let edHistory = []; let edHistPos = -1;
-let edPlatW = 160; let edPlatH = 16;
-let edSpikeW = 42;
-let edSidePanel = 'tools'; // 'tools' | 'levels'
 let edMouseX = 0; let edMouseY = 0;
-let edTestReturnState = null; // state to return to after test
-let edTestLevel = null;       // level data being tested
-let edTestSource = null;      // index of level being tested
+let edTestLevel = null;
 
 let levelIndex = 0;
 let score = 0, gameTime = 0, deaths = 0;
@@ -907,9 +172,8 @@ let lsScroll = 0;      // which row is at top
 const LS_COLS = 5;     // columns in grid
 let lsCursor = 0;      // highlighted cell (0-based level index)
 
-// Tracking unlocked levels (persist via localStorage if available)
+// Tracking unlocked levels (persisted, set properly after levels load)
 let unlockedUpTo = 0;
-try { unlockedUpTo = parseInt(localStorage.getItem('cak_unlocked') || '0'); } catch(e){}
 function saveUnlocked() {
   try { localStorage.setItem('cak_unlocked', String(unlockedUpTo)); } catch(e){}
 }
@@ -1069,12 +333,14 @@ function update(dt) {
       lsCursor  = 0;
       lsScroll  = 0;
     }
-    // Secret: press E to open dev editor auth
-    if (wasPressed('KeyE')) {
+    // E or C opens the level creator
+    if (wasPressed('KeyE','KeyC')) {
       SFX.menuNav();
-      edAuthInput = '';
-      edAuthShake = 0;
-      gameState = STATE.EDITOR_AUTH;
+      edLevels = edLoadCustom();
+      edIdx = Math.max(0, edLevels.length - 1);
+      edHistPos = -1; edHistory = [];
+      edPushHistory();
+      gameState = STATE.EDITOR;
     }
     clearJustPressed();
     return;
@@ -1125,15 +391,6 @@ function update(dt) {
       SFX.menuNav();
       gameState = STATE.MENU;
     }
-    clearJustPressed();
-    return;
-  }
-
-  // ── EDITOR AUTH ───────────────────────────────────────────────
-  if (gameState === STATE.EDITOR_AUTH) {
-    edAuthCursor += dt;
-    if (edAuthShake > 0) edAuthShake -= dt;
-    if (wasPressed('Escape')) { SFX.menuNav(); gameState = STATE.MENU; }
     clearJustPressed();
     return;
   }
@@ -1343,8 +600,17 @@ function die() {
 //  DRAW HELPERS
 // ════════════════════════════════════════════════════════════════
 function drawBg(idx) {
-  idx = Math.max(0, Math.min(idx, LEVELS.length - 1));
-  const lvl = LEVELS[idx];
+  // In test mode levelIndex is -1; fall back to level 0 bg or use edTestLevel's bg
+  let lvl;
+  if (idx === -1 && edTestLevel) {
+    lvl = edTestLevel;
+  } else if (LEVELS.length === 0) {
+    // Still loading — use default dark bg
+    ctx.fillStyle = '#0d0d1a'; ctx.fillRect(0, 0, W, H); return;
+  } else {
+    idx = Math.max(0, Math.min(idx, LEVELS.length - 1));
+    lvl = LEVELS[idx];
+  }
   const grad = ctx.createLinearGradient(0, 0, 0, H);
   grad.addColorStop(0, lvl.bgTop);
   grad.addColorStop(1, lvl.bgBot);
@@ -1558,7 +824,7 @@ function drawHUD() {
 
   ctx.textAlign = 'center';
   ctx.fillStyle = '#f0f0f0';
-  ctx.fillText('Level ' + (levelIndex + 1) + ' / ' + LEVELS.length, W/2, 21);
+  ctx.fillText(levelIndex === -1 ? '[ TEST MODE ]' : 'Level ' + (levelIndex + 1) + ' / ' + LEVELS.length, W/2, 21);
 
   const mm = String(Math.floor(gameTime / 60)).padStart(2,'0');
   const ss = String(Math.floor(gameTime % 60)).padStart(2,'0');
@@ -1661,7 +927,7 @@ function drawKeyIcon(cx, cy, scale = 1) {
 function drawMenu() {
   drawBg(0);
 
-  const cw = 440, ch = 320;
+  const cw = 440, ch = 360;
   const cx = W/2 - cw/2, cy = H/2 - ch/2 - 10;
   drawCard(cx, cy, cw, ch, 0.78);
 
@@ -1673,38 +939,35 @@ function drawMenu() {
   ctx.textAlign = 'center';
   ctx.font = '14px monospace';
   ctx.fillStyle = '#aaaacc';
-  ctx.fillText('Grab the key · Open the door · Escape!', W/2, cy + 162);
+  ctx.fillText('Grab the key · Open the door · Escape!', W/2, cy + 160);
 
-  // Play button visual
-  const btnY = cy + 205;
-  ctx.fillStyle = 'rgba(255,214,10,0.12)';
-  ctx.beginPath();
-  ctx.roundRect(W/2 - 130, btnY, 260, 42, 10);
-  ctx.fill();
-  ctx.strokeStyle = '#ffd60a';
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
-  glowText('▶  PRESS SPACE TO PLAY', W/2, btnY + 27, 'bold 16px monospace', '#ffffff', '#ffd60a');
+  // ── PLAY button
+  const playY = cy + 188;
+  ctx.fillStyle = 'rgba(255,214,10,0.13)';
+  ctx.beginPath(); ctx.roundRect(W/2 - 150, playY, 300, 44, 10); ctx.fill();
+  ctx.strokeStyle = '#ffd60a'; ctx.lineWidth = 1.5; ctx.stroke();
+  glowText('▶  PLAY  ( Space )', W/2, playY + 28, 'bold 16px monospace', '#ffffff', '#ffd60a');
 
-  ctx.font = '12px monospace';
-  ctx.fillStyle = '#555577';
-  ctx.fillText(LEVELS.length + ' levels  ·  Collect coins for bonus points', W/2, cy + ch - 18);
+  // ── CREATE LEVEL button
+  const edY = cy + 244;
+  ctx.fillStyle = 'rgba(167,139,250,0.13)';
+  ctx.beginPath(); ctx.roundRect(W/2 - 150, edY, 300, 44, 10); ctx.fill();
+  ctx.strokeStyle = '#a78bfa'; ctx.lineWidth = 1.5; ctx.stroke();
+  glowText('✏  CREATE LEVEL  ( E )', W/2, edY + 28, 'bold 15px monospace', '#e0d4ff', '#a78bfa');
 
   // Progress bar
-  const prog = unlockedUpTo / (LEVELS.length - 1);
-  const bw = 280, bh = 6;
-  const bx = W/2 - bw/2, by = cy + ch - 42;
+  const prog = LEVELS.length > 1 ? unlockedUpTo / (LEVELS.length - 1) : 0;
+  const bw = 300, bh = 6;
+  const bx = W/2 - bw/2, by = cy + ch - 52;
   ctx.fillStyle = 'rgba(255,255,255,0.08)';
   ctx.beginPath(); ctx.roundRect(bx, by, bw, bh, 3); ctx.fill();
   ctx.fillStyle = '#ffd60a';
   ctx.beginPath(); ctx.roundRect(bx, by, bw * prog, bh, 3); ctx.fill();
-  ctx.font = '11px monospace';
-  ctx.fillStyle = '#888899';
+  ctx.font = '11px monospace'; ctx.fillStyle = '#888899'; ctx.textAlign = 'center';
   ctx.fillText((unlockedUpTo + 1) + ' / ' + LEVELS.length + ' levels unlocked', W/2, by - 6);
 
-  // Subtle dev hint bottom-right
-  ctx.font = '10px monospace'; ctx.textAlign = 'right'; ctx.fillStyle = '#2a2a4a';
-  ctx.fillText('dev', W - 8, H - 8);
+  ctx.font = '12px monospace'; ctx.fillStyle = '#555577';
+  ctx.fillText(LEVELS.length + ' levels  ·  Collect coins for bonus points', W/2, cy + ch - 18);
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -1826,6 +1089,27 @@ function drawWinScreen() {
   drawBg(levelIndex);
   drawPlatforms(); drawSpikes(); drawCoins(); drawDoor(); drawParticles();
 
+  // Test mode win
+  if (edTestLevel) {
+    const cw = 420, ch = 260, cx = W/2-cw/2, cy = H/2-ch/2;
+    drawCard(cx, cy, cw, ch, 0.88);
+    ctx.save(); ctx.shadowBlur=30; ctx.shadowColor='#a78bfa';
+    ctx.font='36px serif'; ctx.textAlign='center'; ctx.fillStyle='#a78bfa';
+    ctx.fillText('✓', W/2, cy+72); ctx.restore();
+    glowText('TEST COMPLETE!', W/2, cy+110, 'bold 30px monospace', '#a78bfa', '#7c3aed');
+    ctx.font='14px monospace'; ctx.textAlign='center'; ctx.fillStyle='#ccccee';
+    ctx.fillText('Score: ' + score + '   Deaths: ' + deaths, W/2, cy+148);
+    const mm=String(Math.floor(gameTime/60)).padStart(2,'0'), ss=String(Math.floor(gameTime%60)).padStart(2,'0');
+    ctx.font='13px monospace'; ctx.fillStyle='#888899';
+    ctx.fillText('Time: '+mm+':'+ss, W/2, cy+172);
+    const btnY=cy+ch-46;
+    ctx.fillStyle='rgba(167,139,250,0.15)'; ctx.beginPath(); ctx.roundRect(cx+14,btnY,cw-28,34,8); ctx.fill();
+    ctx.strokeStyle='rgba(167,139,250,0.4)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.font='bold 13px monospace'; ctx.fillStyle='#ffffff'; ctx.textAlign='center';
+    ctx.fillText('SPACE — back to editor   ·   ESC — editor', W/2, btnY+22);
+    return;
+  }
+
   const isLast = levelIndex + 1 >= LEVELS.length;
   const cw = 420, ch = 290;
   const cx = W/2 - cw/2, cy = H/2 - ch/2;
@@ -1924,7 +1208,7 @@ function drawDeadScreen() {
   glowText('YOU DIED', W/2, cy + 112, 'bold 36px monospace', '#e63946', '#800010');
 
   ctx.font = '14px monospace'; ctx.textAlign = 'center'; ctx.fillStyle = '#aaaacc';
-  ctx.fillText('Level ' + (levelIndex + 1) + '   Deaths: ' + deaths, W/2, cy + 146);
+  ctx.fillText((edTestLevel ? '[TEST] ' : 'Level ' + (levelIndex + 1) + '   ') + 'Deaths: ' + deaths, W/2, cy + 146);
 
   // Tip (random or contextual)
   const tips = [
@@ -1946,7 +1230,7 @@ function drawDeadScreen() {
 
   const b2y = cy + ch - 36;
   ctx.font = '12px monospace'; ctx.fillStyle = '#555577';
-  ctx.fillText('R — restart   ·   M / ESC — main menu', W/2, b2y + 16);
+  ctx.fillText(edTestLevel ? 'R — restart test   ·   ESC — back to editor' : 'R — restart   ·   M / ESC — main menu', W/2, b2y + 16);
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -1959,7 +1243,6 @@ function draw() {
   if (gameState === STATE.LEVEL_SELECT) { drawLevelSelect(); return; }
   if (gameState === STATE.WIN)          { drawWinScreen();   return; }
   if (gameState === STATE.DEAD)         { drawDeadScreen();  return; }
-  if (gameState === STATE.EDITOR_AUTH)  { drawEditorAuth();  return; }
   if (gameState === STATE.EDITOR)       { drawEditor();      return; }
 
   // PLAYING
@@ -1985,37 +1268,6 @@ function draw() {
 }
 
 // ════════════════════════════════════════════════════════════════
-//  EDITOR AUTH — keyboard input handler
-// ════════════════════════════════════════════════════════════════
-document.addEventListener('keydown', e => {
-  if (gameState !== STATE.EDITOR_AUTH) return;
-  if (e.key === 'Escape') { gameState = STATE.MENU; edAuthInput = ''; return; }
-  if (e.key === 'Enter') {
-    if (hashInput(edAuthInput) === DEV_KEY_HASH) {
-      SFX.levelWin();
-      editorUnlocked = true;
-      edLevels = JSON.parse(JSON.stringify(LEVELS)).map(l => { if(!l.powerups) l.powerups=[]; if(!l.name) l.name=''; return l; });
-      // Load saved custom levels
-      try {
-        const saved = localStorage.getItem('cak_editor_levels');
-        if (saved) { const parsed = JSON.parse(saved); parsed.forEach(l=>{if(!l.powerups)l.powerups=[];if(!l.name)l.name='';edLevels.push(l);}); }
-      } catch(e){}
-      edIdx = 0;
-      edHistPos = -1; edHistory = [];
-      edPushHistory();
-      gameState = STATE.EDITOR;
-    } else {
-      SFX.die();
-      edAuthShake = 0.4;
-      edAuthInput = '';
-    }
-    return;
-  }
-  if (e.key === 'Backspace') { edAuthInput = edAuthInput.slice(0, -1); return; }
-  if (e.key.length === 1 && edAuthInput.length < 40) { edAuthInput += e.key; }
-});
-
-// ════════════════════════════════════════════════════════════════
 //  EDITOR HELPERS
 // ════════════════════════════════════════════════════════════════
 function edSnap(v) { return edSnapOn ? Math.round(v / edSnapSize) * edSnapSize : Math.round(v); }
@@ -2034,7 +1286,18 @@ function edPushHistory() {
 function edUndo() { if (edHistPos > 0) { edHistPos--; edLevels = JSON.parse(edHistory[edHistPos]); } }
 function edRedo() { if (edHistPos < edHistory.length-1) { edHistPos++; edLevels = JSON.parse(edHistory[edHistPos]); } }
 function edSaveLocal() {
-  try { localStorage.setItem('cak_editor_levels', JSON.stringify(edLevels.slice(LEVELS.length))); } catch(e){}
+  try { localStorage.setItem('cak_editor_levels', JSON.stringify(edLevels)); } catch(e){}
+}
+function edLoadCustom() {
+  try {
+    const saved = localStorage.getItem('cak_editor_levels');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      parsed.forEach(l => { if(!l.powerups) l.powerups=[]; if(!l.name) l.name='Custom Level'; });
+      return parsed;
+    }
+  } catch(e){}
+  return [];
 }
 
 function edEmptyLevel(name) {
@@ -2085,38 +1348,49 @@ function edEraseAt(pos, lvl) {
 // ════════════════════════════════════════════════════════════════
 //  EDITOR CANVAS EVENTS
 // ════════════════════════════════════════════════════════════════
-// Layout: left toolbar = 180px, right level list = 0 (overlay drawn on canvas)
 const ED_TOOLBAR_W = 180;
 const ED_TOPBAR_H  = 36;
 const ED_BTMBAR_H  = 28;
-// Canvas viewport for editing: x from ED_TOOLBAR_W, y from ED_TOPBAR_H
+const ED_CANVAS_W  = W - ED_TOOLBAR_W;   // 620
+const ED_CANVAS_H  = H - ED_TOPBAR_H - ED_BTMBAR_H; // 436
+const ED_SCALE_X   = ED_CANVAS_W / 800;  // game coords → canvas pixels
+const ED_SCALE_Y   = ED_CANVAS_H / 500;
+
+// Get raw canvas-space coords (0..W, 0..H), accounting for CSS scaling only
 function edGetPos(e) {
   const rect = canvas.getBoundingClientRect();
-  const scaleX = W / rect.width, scaleY = H / rect.height;
+  const cssScaleX = W / rect.width;
+  const cssScaleY = H / rect.height;
   return {
-    x: edClampX((e.clientX - rect.left) * scaleX),
-    y: edClampY((e.clientY - rect.top)  * scaleY),
+    x: (e.clientX - rect.left) * cssScaleX,
+    y: (e.clientY - rect.top)  * cssScaleY,
   };
 }
-function edCanvasPos(e) {
-  // Returns game-space coordinates offset by toolbar
-  const raw = edGetPos(e);
-  return { x: edClampX(raw.x - ED_TOOLBAR_W), y: edClampY(raw.y - ED_TOPBAR_H) };
+
+// Convert raw canvas pos → game-space coords (0..800, 0..500)
+// The game area is drawn translated by (ED_TOOLBAR_W, ED_TOPBAR_H) then scaled by ED_SCALE_X/Y
+function edToGame(raw) {
+  return {
+    x: Math.round((raw.x - ED_TOOLBAR_W) / ED_SCALE_X),
+    y: Math.round((raw.y - ED_TOPBAR_H)  / ED_SCALE_Y),
+  };
 }
-function edIsInCanvas(pos) {
-  return pos.x >= ED_TOOLBAR_W && pos.x < W && pos.y >= ED_TOPBAR_H && pos.y < H - ED_BTMBAR_H;
+
+function edInGameArea(raw) {
+  return raw.x >= ED_TOOLBAR_W && raw.x < W &&
+         raw.y >= ED_TOPBAR_H  && raw.y < H - ED_BTMBAR_H;
 }
 
 canvas.addEventListener('mousedown', e => {
   if (gameState !== STATE.EDITOR) return;
   e.preventDefault();
   const raw = edGetPos(e);
-  // Check if click is in toolbar or topbar — handle UI
+
   if (raw.x < ED_TOOLBAR_W) { edHandleToolbarClick(raw); return; }
   if (raw.y < ED_TOPBAR_H)  { edHandleTopbarClick(raw);  return; }
   if (raw.y > H - ED_BTMBAR_H) return;
 
-  const pos = { x: raw.x - ED_TOOLBAR_W, y: raw.y - ED_TOPBAR_H };
+  const pos = edToGame(raw); // game-space 0..800, 0..500
   const lvl = edCurLvl(); if (!lvl) return;
   edPushHistory();
 
@@ -2129,34 +1403,29 @@ canvas.addEventListener('mousedown', e => {
     return;
   }
   if (edTool === 'erase') { edEraseAt(pos, lvl); edPushHistory(); return; }
-  // Single-place tools
   if (edTool === 'player') { lvl.playerStart = { x:edSnap(pos.x), y:edSnap(pos.y) }; edPushHistory(); return; }
   if (edTool === 'door')   { lvl.door  = { x:edSnap(pos.x), y:edSnap(pos.y) };       edPushHistory(); return; }
   if (edTool === 'key')    { lvl.key   = { x:edSnap(pos.x), y:edSnap(pos.y) };       edPushHistory(); return; }
   if (edTool === 'coin')   { lvl.coins.push({ x:edSnap(pos.x), y:edSnap(pos.y) });   edPushHistory(); return; }
   const puMap = { pu_hj:'HIGH_JUMP', pu_sb:'SPEED_BOOST', pu_inv:'INVINCIBLE' };
   if (puMap[edTool]) { if(!lvl.powerups)lvl.powerups=[]; lvl.powerups.push({x:edSnap(pos.x),y:edSnap(pos.y),type:puMap[edTool]}); edPushHistory(); return; }
-  // Drag tools
   edDrag = { start:{...pos}, cur:{...pos} };
 });
 
 canvas.addEventListener('mousemove', e => {
   if (gameState !== STATE.EDITOR) return;
   const raw = edGetPos(e);
+  // Store raw offset for crosshair drawing (in canvas-space relative to game area)
   edMouseX = raw.x - ED_TOOLBAR_W;
   edMouseY = raw.y - ED_TOPBAR_H;
 
   if (!edDrag) return;
-  const pos = { x: raw.x - ED_TOOLBAR_W, y: raw.y - ED_TOPBAR_H };
+  const pos = edToGame(raw);
   edDrag.cur = pos;
 
   if (edTool === 'select' && edSelItem) {
-    edSelItem.obj.x = edSnap(pos.x - edSelOffset.x);
-    edSelItem.obj.y = edSnap(pos.y - edSelOffset.y);
-    if (edSelItem.type === 'platform') {
-      edSelItem.obj.x = Math.max(0, Math.min(W - ED_TOOLBAR_W - edSelItem.obj.w, edSelItem.obj.x));
-      edSelItem.obj.y = Math.max(0, Math.min(H - ED_TOPBAR_H - edSelItem.obj.h, edSelItem.obj.y));
-    }
+    edSelItem.obj.x = Math.max(0, edSnap(pos.x - edSelOffset.x));
+    edSelItem.obj.y = Math.max(0, edSnap(pos.y - edSelOffset.y));
   }
 });
 
@@ -2164,7 +1433,7 @@ canvas.addEventListener('mouseup', e => {
   if (gameState !== STATE.EDITOR) return;
   if (!edDrag) return;
   const raw = edGetPos(e);
-  const pos = { x: raw.x - ED_TOOLBAR_W, y: raw.y - ED_TOPBAR_H };
+  const pos = edToGame(raw);
   const lvl = edCurLvl();
 
   if (edTool === 'select') { if (edSelItem) edPushHistory(); edSelItem = null; edDrag = null; return; }
@@ -2189,7 +1458,7 @@ canvas.addEventListener('contextmenu', e => {
   e.preventDefault();
   const raw = edGetPos(e);
   if (raw.x < ED_TOOLBAR_W || raw.y < ED_TOPBAR_H) return;
-  const pos = { x: raw.x - ED_TOOLBAR_W, y: raw.y - ED_TOPBAR_H };
+  const pos = edToGame(raw);
   const lvl = edCurLvl(); if (!lvl) return;
   edEraseAt(pos, lvl);
   edPushHistory();
@@ -2209,31 +1478,41 @@ document.addEventListener('keydown', e => {
 });
 
 function edHandleToolbarClick(raw) {
-  // Tool buttons are stacked from y=44 in 32px increments
+  // Tool buttons stacked from y=ED_TOPBAR_H+8 in 32px increments, x < ED_TOOLBAR_W
   const tools = ['platform','spike','coin','key','door','player','select','erase','pu_hj','pu_sb','pu_inv'];
   const btnH = 30, startY = ED_TOPBAR_H + 8;
   const ti = Math.floor((raw.y - startY) / (btnH + 2));
-  if (ti >= 0 && ti < tools.length) { edTool = tools[ti]; SFX.coin(); }
-  // Snap toggle is at bottom of toolbar
-  if (raw.y > H - 90 && raw.y < H - 60) { edSnapOn = !edSnapOn; SFX.coin(); }
-  if (raw.y > H - 56 && raw.y < H - 30) edTestCurrent();
+  if (ti >= 0 && ti < tools.length) { edTool = tools[ti]; SFX.coin(); return; }
+  // Snap toggle at H-88
+  if (raw.y >= H - 88 && raw.y < H - 62) { edSnapOn = !edSnapOn; SFX.coin(); return; }
+  // Test button at H-58
+  if (raw.y >= H - 58 && raw.y < H - 32) { edTestCurrent(); return; }
+  // Exit button at H-28
+  if (raw.y >= H - 28) { SFX.menuNav(); gameState = STATE.MENU; }
 }
 
 function edHandleTopbarClick(raw) {
-  // Topbar buttons: new(10), undo(80), redo(130), test(190), export(260), < level (360), > level (400), name area
-  if (raw.x >= 6   && raw.x < 72)  { edLevels.push(edEmptyLevel('Custom '+(edLevels.length+1))); edIdx=edLevels.length-1; edPushHistory(); SFX.coin(); }
-  if (raw.x >= 78  && raw.x < 126) { edUndo(); SFX.menuNav(); }
-  if (raw.x >= 130 && raw.x < 178) { edRedo(); SFX.menuNav(); }
-  if (raw.x >= 182 && raw.x < 250) { edTestCurrent(); }
-  if (raw.x >= 254 && raw.x < 334) { edExport(); }
-  if (raw.x >= 340 && raw.x < 368) { if(edIdx>0){edIdx--;SFX.coin();} }
-  if (raw.x >= 372 && raw.x < 400) { if(edIdx<edLevels.length-1){edIdx++;SFX.coin();} }
-  if (raw.x >= 560 && raw.x < 660) { edSnapOn=!edSnapOn; SFX.coin(); }
-  if (raw.x >= 670 && raw.x < 760) {
-    const g = parseInt(prompt('Grid size (8/16/20/32):', edSnapSize) || edSnapSize);
-    if ([8,16,20,32].includes(g)) edSnapSize = g;
-  }
-  if (raw.x >= W - 60) { SFX.menuNav(); gameState = STATE.MENU; }
+  // raw.x is full canvas coords (0-800). Topbar buttons start after ED_TOOLBAR_W=180.
+  // Button positions as drawn in drawEditor (all offset by ED_TOOLBAR_W):
+  // new:    ED_TOOLBAR_W+6  ..  ED_TOOLBAR_W+70   = 186..250
+  // undo:   ED_TOOLBAR_W+76 ..  ED_TOOLBAR_W+120  = 256..300
+  // redo:   ED_TOOLBAR_W+124 .. ED_TOOLBAR_W+168  = 304..348
+  // test:   ED_TOOLBAR_W+172 .. ED_TOOLBAR_W+236  = 352..416
+  // export: ED_TOOLBAR_W+240 .. ED_TOOLBAR_W+316  = 420..496
+  // < nav:  ED_TOOLBAR_W+326 .. ED_TOOLBAR_W+350  = 506..530
+  // > nav:  ED_TOOLBAR_W+354 .. ED_TOOLBAR_W+378  = 534..558
+  // snap:   W-180 .. W-66
+  // exit:   W-60  .. W
+  const x = raw.x;
+  if (x >= 186 && x < 250) { edLevels.push(edEmptyLevel('Custom '+(edLevels.length+1))); edIdx=edLevels.length-1; edPushHistory(); SFX.coin(); }
+  if (x >= 256 && x < 304) { edUndo(); SFX.menuNav(); }
+  if (x >= 308 && x < 352) { edRedo(); SFX.menuNav(); }
+  if (x >= 352 && x < 420) { edTestCurrent(); }
+  if (x >= 420 && x < 500) { edExport(); }
+  if (x >= 506 && x < 532) { if(edIdx>0){edIdx--;SFX.coin();} }
+  if (x >= 534 && x < 560) { if(edIdx<edLevels.length-1){edIdx++;SFX.coin();} }
+  if (x >= W-180 && x < W-62) { edSnapOn=!edSnapOn; SFX.coin(); }
+  if (x >= W-60) { SFX.menuNav(); gameState = STATE.MENU; }
 }
 
 function edTestCurrent() {
@@ -2241,6 +1520,7 @@ function edTestCurrent() {
   edTestLevel = JSON.parse(JSON.stringify(lvl));
   SFX.levelWin();
   score = 0; gameTime = 0; deaths = 0;
+  levelIndex = -1; // sentinel: not a real game level
   initLevel(0, edTestLevel);
   gameState = STATE.PLAYING;
 }
@@ -2270,62 +1550,6 @@ function edExport() {
 }
 
 // ════════════════════════════════════════════════════════════════
-//  EDITOR DRAW — AUTH SCREEN
-// ════════════════════════════════════════════════════════════════
-function drawEditorAuth() {
-  // Background
-  const grad = ctx.createLinearGradient(0,0,0,H);
-  grad.addColorStop(0,'#0a0a2e'); grad.addColorStop(1,'#0d0d1a');
-  ctx.fillStyle = grad; ctx.fillRect(0,0,W,H);
-
-  // Stars
-  ctx.fillStyle='rgba(255,255,255,0.3)';
-  for(let i=0;i<30;i++){const sx=((i*9301+49297)%233280)/233280*W,sy=((i*5521+11213)%233280)/233280*(H*0.7);ctx.beginPath();ctx.arc(sx,sy,0.8,0,Math.PI*2);ctx.fill();}
-
-  // Shake offset
-  const shakeX = edAuthShake > 0 ? (Math.random()-0.5)*14 : 0;
-
-  const cw=440, ch=280, cx=W/2-cw/2+shakeX, cy=H/2-ch/2;
-  drawCard(cx, cy, cw, ch, 0.85);
-
-  // Lock icon
-  ctx.save();
-  ctx.shadowBlur = edAuthShake>0 ? 30 : 16;
-  ctx.shadowColor = edAuthShake>0 ? '#e63946' : '#ffd60a';
-  ctx.font='36px serif'; ctx.textAlign='center';
-  ctx.fillText('🔐', W/2+shakeX, cy+72);
-  ctx.restore();
-
-  glowText('DEVELOPER MODE', W/2+shakeX, cy+110, 'bold 22px monospace', '#ffd60a', '#aa7700');
-
-  ctx.font='13px monospace'; ctx.textAlign='center';
-  ctx.fillStyle='#6666aa';
-  ctx.fillText('Enter the dev key to access the level editor', W/2+shakeX, cy+138);
-
-  // Input field
-  const fw=320, fh=38, fx=W/2-fw/2+shakeX, fy=cy+156;
-  ctx.fillStyle = edAuthShake>0 ? 'rgba(230,57,70,0.15)' : 'rgba(255,255,255,0.06)';
-  ctx.beginPath(); ctx.roundRect(fx,fy,fw,fh,6); ctx.fill();
-  ctx.strokeStyle = edAuthShake>0 ? '#e63946' : '#4a4a8a';
-  ctx.lineWidth=1.5; ctx.stroke();
-
-  // Password dots
-  const dots = '●'.repeat(edAuthInput.length);
-  const blink = Math.sin(edAuthCursor*4)>0 ? '|' : '';
-  ctx.font='bold 18px monospace'; ctx.textAlign='center';
-  ctx.fillStyle = edAuthShake>0 ? '#e63946' : '#c8c8e8';
-  ctx.fillText(dots + blink, W/2+shakeX, fy+25);
-
-  if (edAuthShake>0) {
-    ctx.font='12px monospace'; ctx.fillStyle='#e63946';
-    ctx.fillText('Wrong key — access denied', W/2+shakeX, fy+fh+18);
-  }
-
-  ctx.font='12px monospace'; ctx.textAlign='center'; ctx.fillStyle='#555577';
-  ctx.fillText('ESC — back  ·  Enter — confirm', W/2+shakeX, cy+ch-18);
-}
-
-// ════════════════════════════════════════════════════════════════
 //  EDITOR DRAW — MAIN EDITOR
 // ════════════════════════════════════════════════════════════════
 const ED_TOOLS = [
@@ -2341,10 +1565,6 @@ const ED_TOOLS = [
   { id:'pu_sb',    label:'⚡ Speed',     color:'#34d399', dot:'#34d399' },
   { id:'pu_inv',   label:'★ Invincible',color:'#f59e0b', dot:'#f59e0b' },
 ];
-const ED_CANVAS_W = W - ED_TOOLBAR_W;
-const ED_CANVAS_H = H - ED_TOPBAR_H - ED_BTMBAR_H;
-const ED_SCALE_X = ED_CANVAS_W / 800;
-const ED_SCALE_Y = ED_CANVAS_H / 500;
 
 function drawEditor() {
   const lvl = edCurLvl();
@@ -2520,20 +1740,34 @@ function drawEditor() {
      ctx.font='bold 9px monospace'; ctx.textAlign='center'; ctx.fillStyle='#0d0d1a';
      ctx.fillText('P',ps.x+13,ps.y+17);}
 
-    // Drag preview
+    // Drag preview (edDrag coords are game-space 0..800/500)
     if (edDrag && (edTool==='platform'||edTool==='spike')) {
       const x1=Math.min(edDrag.start.x,edDrag.cur.x), y1=Math.min(edDrag.start.y,edDrag.cur.y);
       const x2=Math.max(edDrag.start.x,edDrag.cur.x), y2=Math.max(edDrag.start.y,edDrag.cur.y);
       ctx.globalAlpha=0.5;
-      if(edTool==='platform'){ctx.fillStyle='#3a4a6a';ctx.fillRect(edSnap(x1),edSnap(y1),edSnap(Math.max(16,x2-x1)),edSnap(Math.max(8,y2-y1)));}
-      else{const sw=edSnap(Math.max(14,x2-x1));ctx.fillStyle='#e63946';const cnt=Math.max(1,Math.floor(sw/14)),ssw=sw/cnt;
-        for(let i=0;i<cnt;i++){ctx.beginPath();ctx.moveTo(edSnap(x1)+i*ssw,edSnap(y1)+17);ctx.lineTo(edSnap(x1)+i*ssw+ssw/2,edSnap(y1));ctx.lineTo(edSnap(x1)+(i+1)*ssw,edSnap(y1)+17);ctx.fill();}}
+      if(edTool==='platform'){
+        ctx.fillStyle='#3a4a6a';
+        ctx.fillRect(edSnap(x1),edSnap(y1),edSnap(Math.max(16,x2-x1)),edSnap(Math.max(8,y2-y1)));
+      } else {
+        const sw=edSnap(Math.max(14,x2-x1));
+        ctx.fillStyle='#e63946';
+        const cnt=Math.max(1,Math.floor(sw/14)),ssw=sw/cnt;
+        for(let i=0;i<cnt;i++){
+          ctx.beginPath();
+          ctx.moveTo(edSnap(x1)+i*ssw, edSnap(y1)+17);
+          ctx.lineTo(edSnap(x1)+i*ssw+ssw/2, edSnap(y1));
+          ctx.lineTo(edSnap(x1)+(i+1)*ssw, edSnap(y1)+17);
+          ctx.fill();
+        }
+      }
       ctx.globalAlpha=1;
     }
-    // Cursor crosshair
-    ctx.strokeStyle='rgba(255,255,255,0.12)'; ctx.lineWidth=1/ED_SCALE_X; ctx.setLineDash([4/ED_SCALE_X,4/ED_SCALE_X]);
-    ctx.beginPath(); ctx.moveTo(0,edMouseY/ED_SCALE_Y); ctx.lineTo(800,edMouseY/ED_SCALE_Y); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(edMouseX/ED_SCALE_X,0); ctx.lineTo(edMouseX/ED_SCALE_X,500); ctx.stroke();
+    // Cursor crosshair (edMouseX/Y are canvas-px relative to game area; divide by scale for game-space)
+    const ghx = edMouseX / ED_SCALE_X;
+    const ghy = edMouseY / ED_SCALE_Y;
+    ctx.strokeStyle='rgba(255,255,255,0.14)'; ctx.lineWidth=1/ED_SCALE_X; ctx.setLineDash([4/ED_SCALE_X,4/ED_SCALE_X]);
+    ctx.beginPath(); ctx.moveTo(0,ghy); ctx.lineTo(800,ghy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(ghx,0); ctx.lineTo(ghx,500); ctx.stroke();
     ctx.setLineDash([]);
 
     ctx.restore();
@@ -2543,7 +1777,8 @@ function drawEditor() {
   ctx.fillStyle='#0c0c22'; ctx.fillRect(ED_TOOLBAR_W,H-ED_BTMBAR_H,W-ED_TOOLBAR_W,ED_BTMBAR_H);
   ctx.fillStyle='#1a1a3a'; ctx.fillRect(ED_TOOLBAR_W,H-ED_BTMBAR_H,W-ED_TOOLBAR_W,1);
   ctx.font='11px monospace'; ctx.textAlign='left'; ctx.fillStyle='#555577';
-  const gx = Math.max(0,Math.round(edMouseX/ED_SCALE_X)), gy = Math.max(0,Math.round(edMouseY/ED_SCALE_Y));
+  const gx = Math.max(0, Math.min(800, Math.round(edMouseX / ED_SCALE_X)));
+  const gy = Math.max(0, Math.min(500, Math.round(edMouseY / ED_SCALE_Y)));
   ctx.fillText(
     `x:${gx} y:${gy}  |  P=platform S=spike C=coin K=key O=door R=player V=select E=erase 1-3=powerup T=test Ctrl+Z/Y=undo/redo`,
     ED_TOOLBAR_W+8, H-8
@@ -2553,6 +1788,30 @@ function drawEditor() {
     ctx.fillText(`plat:${lvl.platforms.length} spike:${(lvl.spikes||[]).length} coin:${(lvl.coins||[]).length} pu:${(lvl.powerups||[]).length}`, W-8, H-8);
   }
 }
+
+// ════════════════════════════════════════════════════════════════
+//  CANVAS CLICK — menu button hit detection
+// ════════════════════════════════════════════════════════════════
+canvas.addEventListener('click', e => {
+  if (gameState !== STATE.MENU) return;
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = W / rect.width, scaleY = H / rect.height;
+  const mx = (e.clientX - rect.left) * scaleX;
+  const my = (e.clientY - rect.top)  * scaleY;
+  const cw = 440, ch = 360;
+  const cx = W/2 - cw/2, cy = H/2 - ch/2 - 10;
+  const playY = cy + 188, edY = cy + 244;
+  if (mx >= W/2-150 && mx <= W/2+150 && my >= playY && my <= playY+44) {
+    SFX.menuClick(); gameState = STATE.LEVEL_SELECT; lsCursor=0; lsScroll=0;
+  }
+  if (mx >= W/2-150 && mx <= W/2+150 && my >= edY && my <= edY+44) {
+    SFX.menuNav();
+    edLevels = edLoadCustom();
+    edIdx = Math.max(0, edLevels.length - 1);
+    edHistPos = -1; edHistory = []; edPushHistory();
+    gameState = STATE.EDITOR;
+  }
+});
 
 // ════════════════════════════════════════════════════════════════
 //  MOBILE TOUCH — tap canvas to advance screens
@@ -2568,7 +1827,7 @@ canvas.addEventListener('touchstart', () => {
 });
 
 // ════════════════════════════════════════════════════════════════
-//  GAME LOOP
+//  STARTUP — read levels from levels.js (loaded as <script> tag)
 // ════════════════════════════════════════════════════════════════
 let lastTime = 0;
 function loop(ts) {
@@ -2578,4 +1837,16 @@ function loop(ts) {
   draw();
   requestAnimationFrame(loop);
 }
-requestAnimationFrame(loop);
+
+function loadLevels() {
+  if (window.GAME_LEVELS && window.GAME_LEVELS.length) {
+    LEVELS = window.GAME_LEVELS.map(l => { if (!l.powerups) l.powerups = []; return l; });
+  } else {
+    console.warn('levels.js not loaded or empty — no levels available');
+    LEVELS = [];
+  }
+  try { unlockedUpTo = Math.min(parseInt(localStorage.getItem('cak_unlocked') || '0'), Math.max(0, LEVELS.length - 1)); } catch(e){}
+  requestAnimationFrame(loop);
+}
+
+loadLevels();
