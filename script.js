@@ -17,6 +17,10 @@ const POWERUP_TYPES = {
   INVINCIBLE:  { id: 'INVINCIBLE',  color: '#f59e0b', glow: '#d97706', label: '★ INVINCIBLE',   duration: () => 10 + Math.random() * 15 },
 };
 
+// Dev key hash (djb2 of "Hello world") — used only to gate "Add to Game" export
+const DEV_KEY_HASH = (function(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h)^s.charCodeAt(i);return h>>>0;})('Hello world');
+function hashStr(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h)^s.charCodeAt(i);return h>>>0;}
+
 // ════════════════════════════════════════════════════════════════
 //  LEVELS  — loaded from levels.json at startup
 // ════════════════════════════════════════════════════════════════
@@ -924,50 +928,58 @@ function drawKeyIcon(cx, cy, scale = 1) {
 // ════════════════════════════════════════════════════════════════
 //  MAIN MENU
 // ════════════════════════════════════════════════════════════════
+// Expose button rects so click handler can use same coords
+const MENU_BTNS = {}; // populated each draw
+
 function drawMenu() {
   drawBg(0);
 
-  const cw = 440, ch = 360;
+  const cw = 460, ch = 430;
   const cx = W/2 - cw/2, cy = H/2 - ch/2 - 10;
   drawCard(cx, cy, cw, ch, 0.78);
 
   // Key icon
-  drawKeyIcon(W/2, cy + 62, 1.15);
+  drawKeyIcon(W/2, cy + 58, 1.0);
 
-  glowText('COLLECT A KEY', W/2, cy + 130, 'bold 34px monospace', '#ffd60a', '#ffaa00');
+  glowText('COLLECT A KEY', W/2, cy + 118, 'bold 32px monospace', '#ffd60a', '#ffaa00');
 
-  ctx.textAlign = 'center';
-  ctx.font = '14px monospace';
-  ctx.fillStyle = '#aaaacc';
-  ctx.fillText('Grab the key · Open the door · Escape!', W/2, cy + 160);
+  ctx.textAlign = 'center'; ctx.font = '13px monospace'; ctx.fillStyle = '#aaaacc';
+  ctx.fillText('Grab the key · Open the door · Escape!', W/2, cy + 144);
 
-  // ── PLAY button
-  const playY = cy + 188;
-  ctx.fillStyle = 'rgba(255,214,10,0.13)';
-  ctx.beginPath(); ctx.roundRect(W/2 - 150, playY, 300, 44, 10); ctx.fill();
-  ctx.strokeStyle = '#ffd60a'; ctx.lineWidth = 1.5; ctx.stroke();
-  glowText('▶  PLAY  ( Space )', W/2, playY + 28, 'bold 16px monospace', '#ffffff', '#ffd60a');
+  const btnW = 320, btnH = 40, btnX = W/2 - btnW/2;
+  let btnY = cy + 166;
+  const gap = 10;
 
-  // ── CREATE LEVEL button
-  const edY = cy + 244;
-  ctx.fillStyle = 'rgba(167,139,250,0.13)';
-  ctx.beginPath(); ctx.roundRect(W/2 - 150, edY, 300, 44, 10); ctx.fill();
-  ctx.strokeStyle = '#a78bfa'; ctx.lineWidth = 1.5; ctx.stroke();
-  glowText('✏  CREATE LEVEL  ( E )', W/2, edY + 28, 'bold 15px monospace', '#e0d4ff', '#a78bfa');
+  function drawBtn(key, label, fillCol, strokeCol, textCol) {
+    MENU_BTNS[key] = { x: btnX, y: btnY, w: btnW, h: btnH };
+    ctx.fillStyle = fillCol;
+    ctx.beginPath(); ctx.roundRect(btnX, btnY, btnW, btnH, 9); ctx.fill();
+    ctx.strokeStyle = strokeCol; ctx.lineWidth = 1.5; ctx.stroke();
+    glowText(label, W/2, btnY + 26, 'bold 14px monospace', textCol, strokeCol);
+    btnY += btnH + gap;
+  }
+
+  drawBtn('play',     '▶  PLAY  ( Space )',          'rgba(255,214,10,0.13)',  '#ffd60a', '#ffffff');
+  drawBtn('editor',   '✏  CREATE LEVEL  ( E )',       'rgba(167,139,250,0.13)', '#a78bfa', '#e0d4ff');
+  drawBtn('addLevel', '⬆  ADD CUSTOM LEVEL',          'rgba(76,201,240,0.12)',  '#4cc9f0', '#c0f0ff');
+  drawBtn('download', '⬇  DOWNLOAD A LEVEL',          'rgba(52,211,153,0.12)',  '#34d399', '#c0ffe8');
 
   // Progress bar
-  const prog = LEVELS.length > 1 ? unlockedUpTo / (LEVELS.length - 1) : 0;
-  const bw = 300, bh = 6;
-  const bx = W/2 - bw/2, by = cy + ch - 52;
+  const baseLevels = LEVELS.filter(l => !l._custom).length;
+  const prog = baseLevels > 1 ? Math.min(unlockedUpTo, baseLevels-1) / (baseLevels - 1) : 0;
+  const bw = 320, bh = 6, bx = W/2 - bw/2, by = cy + ch - 52;
   ctx.fillStyle = 'rgba(255,255,255,0.08)';
   ctx.beginPath(); ctx.roundRect(bx, by, bw, bh, 3); ctx.fill();
   ctx.fillStyle = '#ffd60a';
   ctx.beginPath(); ctx.roundRect(bx, by, bw * prog, bh, 3); ctx.fill();
+
   ctx.font = '11px monospace'; ctx.fillStyle = '#888899'; ctx.textAlign = 'center';
-  ctx.fillText((unlockedUpTo + 1) + ' / ' + LEVELS.length + ' levels unlocked', W/2, by - 6);
+  const customCount = LEVELS.filter(l => l._custom).length;
+  const progLabel = (unlockedUpTo + 1) + ' / ' + baseLevels + ' base levels' + (customCount ? '  +  ' + customCount + ' custom' : '');
+  ctx.fillText(progLabel, W/2, by - 6);
 
   ctx.font = '12px monospace'; ctx.fillStyle = '#555577';
-  ctx.fillText(LEVELS.length + ' levels  ·  Collect coins for bonus points', W/2, cy + ch - 18);
+  ctx.fillText(LEVELS.length + ' total levels  ·  Collect coins for bonus points', W/2, cy + ch - 18);
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -1008,59 +1020,48 @@ function drawLevelSelect() {
       const active  = idx === lsCursor;
       const lvl     = LEVELS[idx];
 
-      // Cell bg — use level color as tint
+      // Cell bg
       ctx.save();
-      if (active) {
-        ctx.shadowBlur  = 20;
-        ctx.shadowColor = '#ffd60a';
-      }
+      if (active) { ctx.shadowBlur = 20; ctx.shadowColor = lvl._custom ? '#4cc9f0' : '#ffd60a'; }
       ctx.fillStyle = locked
         ? 'rgba(20,20,35,0.85)'
         : active
-          ? 'rgba(255,214,10,0.22)'
-          : 'rgba(30,35,70,0.80)';
-      ctx.beginPath();
-      ctx.roundRect(cx2, cy2, LS_CELL, LS_CELL, 10);
-      ctx.fill();
+          ? (lvl._custom ? 'rgba(76,201,240,0.22)' : 'rgba(255,214,10,0.22)')
+          : lvl._custom ? 'rgba(20,40,60,0.80)' : 'rgba(30,35,70,0.80)';
+      ctx.beginPath(); ctx.roundRect(cx2, cy2, LS_CELL, LS_CELL, 10); ctx.fill();
 
       // Border
-      ctx.strokeStyle = active ? '#ffd60a' : locked ? '#333355' : '#4a4a7a';
-      ctx.lineWidth   = active ? 2.5 : 1;
-      ctx.stroke();
+      ctx.strokeStyle = active ? (lvl._custom ? '#4cc9f0' : '#ffd60a') : locked ? '#333355' : lvl._custom ? '#2a6a8a' : '#4a4a7a';
+      ctx.lineWidth = active ? 2.5 : 1; ctx.stroke();
       ctx.restore();
 
       // Level preview: small gradient swatch
       if (!locked) {
         const miniGrad = ctx.createLinearGradient(cx2 + 6, cy2 + 6, cx2 + 6, cy2 + 36);
-        miniGrad.addColorStop(0, lvl.bgTop);
-        miniGrad.addColorStop(1, lvl.bgBot);
+        miniGrad.addColorStop(0, lvl.bgTop); miniGrad.addColorStop(1, lvl.bgBot);
         ctx.fillStyle = miniGrad;
-        ctx.beginPath();
-        ctx.roundRect(cx2 + 6, cy2 + 6, LS_CELL - 12, 34, 6);
-        ctx.fill();
+        ctx.beginPath(); ctx.roundRect(cx2 + 6, cy2 + 6, LS_CELL - 12, 34, 6); ctx.fill();
+        // Custom level star badge
+        if (lvl._custom) {
+          ctx.save();
+          ctx.fillStyle = '#4cc9f0';
+          ctx.font = 'bold 9px monospace'; ctx.textAlign = 'right';
+          ctx.fillText('★', cx2 + LS_CELL - 7, cy2 + 16);
+          ctx.restore();
+        }
       }
 
       // Number & Lock Icon
       ctx.save();
-      if (active) { 
-        ctx.shadowBlur = 10; 
-        ctx.shadowColor = '#ffd60a'; 
-      }
+      if (active) { ctx.shadowBlur = 10; ctx.shadowColor = lvl._custom ? '#4cc9f0' : '#ffd60a'; }
       ctx.textAlign = 'center';
-      
       if (locked) {
-        // Draw the level number (dimmed)
-        ctx.font = 'bold 18px monospace';
-        ctx.fillStyle = '#333355';
+        ctx.font = 'bold 18px monospace'; ctx.fillStyle = '#333355';
         ctx.fillText(String(idx + 1), cx2 + LS_CELL/2, cy2 + 55);
-        
-        // Draw the lock icon below the number
-        ctx.font = '14px monospace';
-        ctx.fillText('🔒', cx2 + LS_CELL/2, cy2 + 75);
+        ctx.font = '14px monospace'; ctx.fillText('🔒', cx2 + LS_CELL/2, cy2 + 75);
       } else {
-        // Draw the active/unlocked level number
         ctx.font = 'bold 22px monospace';
-        ctx.fillStyle = active ? '#ffd60a' : '#c0c0e0';
+        ctx.fillStyle = active ? (lvl._custom ? '#4cc9f0' : '#ffd60a') : lvl._custom ? '#7adcf0' : '#c0c0e0';
         ctx.fillText(String(idx + 1), cx2 + LS_CELL/2, cy2 + 62);
       }
       ctx.restore();
@@ -1079,6 +1080,13 @@ function drawLevelSelect() {
     ctx.textAlign = 'center';
     ctx.fillStyle = 'rgba(255,255,255,0.4)';
     ctx.fillText('▼', W/2, H - 14);
+  }
+
+  // Custom level legend (bottom-left)
+  const customCount = LEVELS.filter(l => l._custom).length;
+  if (customCount > 0) {
+    ctx.font = '11px monospace'; ctx.textAlign = 'left'; ctx.fillStyle = '#4cc9f0';
+    ctx.fillText('★ = custom level (' + customCount + ')', 10, H - 8);
   }
 }
 
@@ -1526,27 +1534,166 @@ function edTestCurrent() {
 }
 
 function edExport() {
-  let out = 'const LEVELS = [\n';
-  edLevels.forEach((lvl,i) => {
-    out += `  // Level ${i+1}: ${lvl.name||''}\n  {\n`;
-    out += `    bgTop:'${lvl.bgTop}',bgBot:'${lvl.bgBot}',\n`;
-    out += `    playerStart:{x:${lvl.playerStart.x},y:${lvl.playerStart.y}},\n`;
-    out += `    door:{x:${lvl.door.x},y:${lvl.door.y}},\n`;
-    out += `    key:{x:${lvl.key.x},y:${lvl.key.y}},\n`;
-    out += `    platforms:[${lvl.platforms.map(p=>`{x:${p.x},y:${p.y},w:${p.w},h:${p.h}}`).join(',')}],\n`;
-    out += `    spikes:[${(lvl.spikes||[]).map(s=>`{x:${s.x},y:${s.y},w:${s.w},h:${s.h}}`).join(',')}],\n`;
-    out += `    coins:[${(lvl.coins||[]).map(c=>`{x:${c.x},y:${c.y}}`).join(',')}],\n`;
-    if ((lvl.powerups||[]).length) out += `    powerups:[${lvl.powerups.map(p=>`{x:${p.x},y:${p.y},type:'${p.type}'}`).join(',')}],\n`;
-    out += '  },\n';
+  if (!edLevels.length) { alert('No levels to export.'); return; }
+
+  // ── Build JS output (legacy format) ─────────────────────────
+  function buildJS() {
+    let out = '// Exported custom levels — paste into your LEVELS array\n[\n';
+    edLevels.forEach((lvl, i) => {
+      out += `  // Level: ${lvl.name||'Custom '+(i+1)}\n  {\n`;
+      out += `    bgTop:'${lvl.bgTop}',bgBot:'${lvl.bgBot}',\n`;
+      out += `    playerStart:{x:${lvl.playerStart.x},y:${lvl.playerStart.y}},\n`;
+      out += `    door:{x:${lvl.door.x},y:${lvl.door.y}},\n`;
+      out += `    key:{x:${lvl.key.x},y:${lvl.key.y}},\n`;
+      out += `    platforms:[${lvl.platforms.map(p=>`{x:${p.x},y:${p.y},w:${p.w},h:${p.h}}`).join(',')}],\n`;
+      out += `    spikes:[${(lvl.spikes||[]).map(s=>`{x:${s.x},y:${s.y},w:${s.w},h:${s.h}}`).join(',')}],\n`;
+      out += `    coins:[${(lvl.coins||[]).map(c=>`{x:${c.x},y:${c.y}}`).join(',')}],\n`;
+      if ((lvl.powerups||[]).length) out += `    powerups:[${lvl.powerups.map(p=>`{x:${p.x},y:${p.y},type:'${p.type}'}`).join(',')}],\n`;
+      out += '  },\n';
+    });
+    out += ']';
+    return out;
+  }
+
+  // ── Build JSON output ────────────────────────────────────────
+  function buildJSON() {
+    return JSON.stringify(edLevels, null, 2);
+  }
+
+  // ── "Add to Game": downloads new levels.js AND adds to live session ──
+  function addToGame() {
+    const key = prompt('Enter dev key to add levels to the game:');
+    if (key === null) return;
+    if (hashStr(key) !== DEV_KEY_HASH) {
+      flashStatus('❌ Wrong dev key — access denied', '#e63946');
+      return;
+    }
+    // 1. Add to live play session immediately
+    const existing = loadCustomLevelsForPlay();
+    const existingNames = new Set(existing.map(l => l.name));
+    const toAdd = edLevels.filter(l => !existingNames.has(l.name)).map(l => ({ ...l, _custom: true }));
+    if (toAdd.length) {
+      saveCustomLevelsForPlay([...existing, ...toAdd]);
+      refreshLevels();
+      unlockedUpTo = LEVELS.length - 1;
+      saveUnlocked();
+    }
+    // 2. Download updated levels.js (permanent file replacement)
+    const base = (window.GAME_LEVELS || []).map(l => ({ ...l, powerups: l.powerups||[] }));
+    const baseNames = new Set(base.map(l => l.name));
+    const allNew = edLevels.filter(l => !baseNames.has(l.name));
+    const merged = [...base, ...allNew];
+    const jsContent = 'window.GAME_LEVELS = ' + JSON.stringify(merged, null, 2) + ';\n';
+    downloadFile('levels.js', jsContent, 'text/javascript');
+    flashStatus(`✓ Added ${toAdd.length} level(s) to this session + downloaded new levels.js (${merged.length} total). Replace your levels.js to make permanent.`, '#34d399');
+  }
+
+  function downloadFile(filename, content, mime) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([content], { type: mime }));
+    a.download = filename;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  }
+
+  // ── Build the modal UI ───────────────────────────────────────
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.82);display:flex;align-items:center;justify-content:center;font-family:monospace;';
+
+  const box = document.createElement('div');
+  box.style.cssText = 'background:#0f0f28;border:2px solid #2a2a5a;border-radius:12px;width:720px;max-width:96vw;display:flex;flex-direction:column;overflow:hidden;';
+
+  // Header
+  const hdr = document.createElement('div');
+  hdr.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid #2a2a5a;';
+  hdr.innerHTML = '<span style="color:#ffd60a;font-weight:bold;font-size:14px">⬇ EXPORT LEVELS</span>';
+  const closeBtn = document.createElement('button');
+  closeBtn.textContent = '✕';
+  closeBtn.style.cssText = 'background:none;border:none;color:#888;font-size:16px;cursor:pointer;font-family:monospace;';
+  closeBtn.onclick = () => document.body.removeChild(overlay);
+  hdr.appendChild(closeBtn);
+  box.appendChild(hdr);
+
+  // Tabs
+  const tabs = document.createElement('div');
+  tabs.style.cssText = 'display:flex;border-bottom:1px solid #2a2a5a;';
+  ['JS Code', 'JSON'].forEach((label, i) => {
+    const tab = document.createElement('button');
+    tab.textContent = label;
+    tab.style.cssText = `flex:1;padding:8px;background:${i===0?'rgba(255,214,10,0.1)':'none'};border:none;border-bottom:${i===0?'2px solid #ffd60a':'2px solid transparent'};color:${i===0?'#ffd60a':'#888'};cursor:pointer;font-family:monospace;font-size:12px;`;
+    tab.onclick = () => {
+      ta.value = i === 0 ? buildJS() : buildJSON();
+      tabs.querySelectorAll('button').forEach((b,j) => {
+        b.style.background = j===i ? 'rgba(255,214,10,0.1)' : 'none';
+        b.style.borderBottom = j===i ? '2px solid #ffd60a' : '2px solid transparent';
+        b.style.color = j===i ? '#ffd60a' : '#888';
+      });
+    };
+    tabs.appendChild(tab);
   });
-  out += '];\n';
+  box.appendChild(tabs);
+
+  // Textarea
   const ta = document.createElement('textarea');
-  ta.style.cssText='position:fixed;top:10px;left:50%;transform:translateX(-50%);width:700px;height:400px;z-index:9999;background:#05050f;color:#a8e6a3;font-family:monospace;font-size:11px;padding:12px;border:2px solid #ffd60a;border-radius:8px;';
-  ta.value = out; document.body.appendChild(ta); ta.select();
-  const close = document.createElement('button');
-  close.textContent='✕ Close'; close.style.cssText='position:fixed;top:10px;left:calc(50% + 310px);z-index:10000;padding:8px 14px;background:#ffd60a;border:none;font-family:monospace;cursor:pointer;border-radius:4px;font-weight:bold;';
-  close.onclick=()=>{document.body.removeChild(ta);document.body.removeChild(close);};
-  document.body.appendChild(close);
+  ta.style.cssText = 'height:280px;padding:14px;background:#05050f;color:#a8e6a3;font-family:monospace;font-size:11px;border:none;resize:none;outline:none;';
+  ta.value = buildJS();
+  ta.readOnly = true;
+  box.appendChild(ta);
+
+  // Status bar
+  const status = document.createElement('div');
+  status.style.cssText = 'padding:6px 18px;font-size:11px;color:#555577;min-height:24px;';
+  status.textContent = edLevels.length + ' level(s) ready to export';
+  box.appendChild(status);
+
+  function flashStatus(msg, color) {
+    status.textContent = msg;
+    status.style.color = color;
+    setTimeout(() => { status.style.color = '#555577'; }, 6000);
+  }
+
+  // Action buttons
+  const actions = document.createElement('div');
+  actions.style.cssText = 'display:flex;gap:10px;padding:12px 18px;border-top:1px solid #2a2a5a;flex-wrap:wrap;';
+
+  function mkBtn(label, bg, border, color, onclick) {
+    const b = document.createElement('button');
+    b.textContent = label;
+    b.style.cssText = `padding:8px 16px;background:${bg};border:1.5px solid ${border};color:${color};font-family:monospace;font-size:12px;border-radius:6px;cursor:pointer;`;
+    b.onmouseenter = () => b.style.opacity = '0.8';
+    b.onmouseleave = () => b.style.opacity = '1';
+    b.onclick = onclick;
+    return b;
+  }
+
+  // Copy button
+  actions.appendChild(mkBtn('📋 Copy', 'rgba(255,255,255,0.06)', '#4a4a8a', '#c8c8e8', () => {
+    ta.select(); document.execCommand('copy');
+    flashStatus('✓ Copied to clipboard!', '#ffd60a');
+  }));
+
+  // Download JSON
+  actions.appendChild(mkBtn('⬇ Download JSON', 'rgba(76,201,240,0.1)', '#4cc9f0', '#4cc9f0', () => {
+    downloadFile('custom_levels.json', buildJSON(), 'application/json');
+    flashStatus('✓ Downloaded custom_levels.json', '#4cc9f0');
+  }));
+
+  // Add to Game — dev key gated
+  const addBtn = mkBtn('🎮 Add to Game', 'rgba(255,214,10,0.15)', '#ffd60a', '#ffd60a', addToGame);
+  addBtn.title = 'Requires dev key — merges your levels into levels.js';
+  actions.appendChild(addBtn);
+
+  // Close
+  actions.appendChild(mkBtn('Close', 'none', '#333355', '#666688', () => document.body.removeChild(overlay)));
+
+  box.appendChild(actions);
+  overlay.appendChild(box);
+
+  // Close on backdrop click
+  overlay.addEventListener('click', e => { if (e.target === overlay) document.body.removeChild(overlay); });
+
+  document.body.appendChild(overlay);
+  ta.select();
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -1795,23 +1942,191 @@ function drawEditor() {
 canvas.addEventListener('click', e => {
   if (gameState !== STATE.MENU) return;
   const rect = canvas.getBoundingClientRect();
-  const scaleX = W / rect.width, scaleY = H / rect.height;
-  const mx = (e.clientX - rect.left) * scaleX;
-  const my = (e.clientY - rect.top)  * scaleY;
-  const cw = 440, ch = 360;
-  const cx = W/2 - cw/2, cy = H/2 - ch/2 - 10;
-  const playY = cy + 188, edY = cy + 244;
-  if (mx >= W/2-150 && mx <= W/2+150 && my >= playY && my <= playY+44) {
-    SFX.menuClick(); gameState = STATE.LEVEL_SELECT; lsCursor=0; lsScroll=0;
+  const mx = (e.clientX - rect.left) * (W / rect.width);
+  const my = (e.clientY - rect.top)  * (H / rect.height);
+
+  function hit(btn) {
+    return btn && mx >= btn.x && mx <= btn.x+btn.w && my >= btn.y && my <= btn.y+btn.h;
   }
-  if (mx >= W/2-150 && mx <= W/2+150 && my >= edY && my <= edY+44) {
+
+  if (hit(MENU_BTNS.play)) {
+    SFX.menuClick(); gameState = STATE.LEVEL_SELECT; lsCursor=0; lsScroll=0;
+    return;
+  }
+  if (hit(MENU_BTNS.editor)) {
     SFX.menuNav();
     edLevels = edLoadCustom();
     edIdx = Math.max(0, edLevels.length - 1);
     edHistPos = -1; edHistory = []; edPushHistory();
     gameState = STATE.EDITOR;
+    return;
+  }
+  if (hit(MENU_BTNS.addLevel)) {
+    SFX.menuNav();
+    showAddLevelDialog();
+    return;
+  }
+  if (hit(MENU_BTNS.download)) {
+    SFX.menuNav();
+    showDownloadLevelDialog();
+    return;
   }
 });
+
+// ── Add Custom Level ────────────────────────────────────────────
+function showAddLevelDialog() {
+  const overlay = mkOverlay();
+  const box = mkBox(overlay, '⬆ ADD CUSTOM LEVEL', 640);
+
+  const info = document.createElement('div');
+  info.style.cssText = 'padding:10px 18px;font-size:12px;color:#888899;';
+  info.textContent = 'Paste a level JSON (exported from the level editor or shared by a friend), then click Add.';
+  box.appendChild(info);
+
+  const ta = document.createElement('textarea');
+  ta.placeholder = 'Paste level JSON here...';
+  ta.style.cssText = 'height:200px;padding:12px;background:#05050f;color:#a8e6a3;font-family:monospace;font-size:11px;border:none;border-top:1px solid #2a2a5a;border-bottom:1px solid #2a2a5a;resize:none;outline:none;width:100%;';
+  box.appendChild(ta);
+
+  const status = mkStatus(box);
+
+  const actions = mkActions(box);
+  mkBtn2(actions, '⬆ Add Level', 'rgba(76,201,240,0.15)', '#4cc9f0', '#4cc9f0', () => {
+    try {
+      let raw = ta.value.trim();
+      // Accept single object or array
+      if (raw.startsWith('{')) raw = '[' + raw + ']';
+      const parsed = JSON.parse(raw);
+      const toLevels = Array.isArray(parsed) ? parsed : [parsed];
+      if (!toLevels.length) throw new Error('No levels found');
+      toLevels.forEach(l => {
+        if (!l.platforms || !l.playerStart || !l.door || !l.key) throw new Error('Missing required level fields');
+        if (!l.powerups) l.powerups = [];
+        if (!l.name) l.name = 'Custom Level';
+        l._custom = true;
+      });
+      // Save
+      const existing = loadCustomLevelsForPlay();
+      const all = [...existing, ...toLevels];
+      saveCustomLevelsForPlay(all);
+      refreshLevels();
+      // Unlock the newly added levels so they're playable immediately
+      unlockedUpTo = LEVELS.length - 1;
+      saveUnlocked();
+      status.textContent = '✓ Added ' + toLevels.length + ' level(s)! They appear at the end of the level list.';
+      status.style.color = '#34d399';
+      ta.value = '';
+    } catch(err) {
+      status.textContent = '❌ ' + err.message;
+      status.style.color = '#e63946';
+    }
+  });
+  mkBtn2(actions, 'Also open file…', 'rgba(255,255,255,0.05)', '#333355', '#888899', () => {
+    const input = document.createElement('input');
+    input.type = 'file'; input.accept = '.json';
+    input.onchange = async () => {
+      const text = await input.files[0].text();
+      ta.value = text;
+    };
+    input.click();
+  });
+  mkBtn2(actions, 'Close', 'none', '#333355', '#666688', () => document.body.removeChild(overlay));
+}
+
+// ── Download a Level ────────────────────────────────────────────
+function showDownloadLevelDialog() {
+  const overlay = mkOverlay();
+  const box = mkBox(overlay, '⬇ DOWNLOAD / SHARE LEVEL', 600);
+
+  const info = document.createElement('div');
+  info.style.cssText = 'padding:10px 18px;font-size:12px;color:#888899;';
+  info.textContent = 'Choose a level to download as a JSON file you can share with friends.';
+  box.appendChild(info);
+
+  // Level picker
+  const sel = document.createElement('select');
+  sel.style.cssText = 'width:calc(100% - 36px);margin:0 18px 10px;padding:8px;background:#05050f;color:#c8c8e8;font-family:monospace;font-size:12px;border:1px solid #2a2a5a;border-radius:4px;';
+  LEVELS.forEach((lvl, i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = (i+1) + '. ' + (lvl.name || 'Level '+(i+1)) + (lvl._custom ? ' ★' : '');
+    sel.appendChild(opt);
+  });
+  box.appendChild(sel);
+
+  // Preview textarea
+  const ta = document.createElement('textarea');
+  ta.readOnly = true;
+  ta.style.cssText = 'height:160px;padding:12px;background:#05050f;color:#a8e6a3;font-family:monospace;font-size:11px;border:none;border-top:1px solid #2a2a5a;border-bottom:1px solid #2a2a5a;resize:none;outline:none;width:100%;';
+  box.appendChild(ta);
+
+  function updatePreview() {
+    const lvl = LEVELS[parseInt(sel.value)];
+    if (lvl) ta.value = JSON.stringify(lvl, null, 2);
+  }
+  sel.onchange = updatePreview;
+  updatePreview();
+
+  const status = mkStatus(box);
+
+  const actions = mkActions(box);
+  mkBtn2(actions, '⬇ Download JSON', 'rgba(52,211,153,0.15)', '#34d399', '#34d399', () => {
+    const lvl = LEVELS[parseInt(sel.value)];
+    if (!lvl) return;
+    const name = (lvl.name || 'level').replace(/[^a-z0-9]/gi,'_').toLowerCase();
+    const blob = new Blob([JSON.stringify(lvl, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name + '.json';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    status.textContent = '✓ Downloaded ' + name + '.json';
+    status.style.color = '#34d399';
+  });
+  mkBtn2(actions, '📋 Copy JSON', 'rgba(255,255,255,0.05)', '#4a4a8a', '#c8c8e8', () => {
+    ta.select(); document.execCommand('copy');
+    status.textContent = '✓ Copied to clipboard!'; status.style.color = '#ffd60a';
+  });
+  mkBtn2(actions, 'Close', 'none', '#333355', '#666688', () => document.body.removeChild(overlay));
+}
+
+// ── Shared modal helpers ─────────────────────────────────────────
+function mkOverlay() {
+  const o = document.createElement('div');
+  o.style.cssText = 'position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.82);display:flex;align-items:center;justify-content:center;font-family:monospace;';
+  o.addEventListener('click', e => { if (e.target===o) document.body.removeChild(o); });
+  document.body.appendChild(o);
+  return o;
+}
+function mkBox(overlay, title, width) {
+  const box = document.createElement('div');
+  box.style.cssText = `background:#0f0f28;border:2px solid #2a2a5a;border-radius:12px;width:${width}px;max-width:96vw;display:flex;flex-direction:column;overflow:hidden;`;
+  const hdr = document.createElement('div');
+  hdr.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid #2a2a5a;';
+  hdr.innerHTML = `<span style="color:#ffd60a;font-weight:bold;font-size:14px">${title}</span>`;
+  const closeBtn = document.createElement('button');
+  closeBtn.textContent='✕'; closeBtn.style.cssText='background:none;border:none;color:#888;font-size:16px;cursor:pointer;font-family:monospace;';
+  closeBtn.onclick=()=>document.body.removeChild(overlay);
+  hdr.appendChild(closeBtn); box.appendChild(hdr); overlay.appendChild(box);
+  return box;
+}
+function mkStatus(box) {
+  const s = document.createElement('div');
+  s.style.cssText = 'padding:6px 18px;font-size:11px;color:#555577;min-height:22px;';
+  box.appendChild(s); return s;
+}
+function mkActions(box) {
+  const a = document.createElement('div');
+  a.style.cssText = 'display:flex;gap:8px;padding:12px 18px;border-top:1px solid #2a2a5a;flex-wrap:wrap;';
+  box.appendChild(a); return a;
+}
+function mkBtn2(parent, label, bg, border, color, onclick) {
+  const b = document.createElement('button');
+  b.textContent = label;
+  b.style.cssText = `padding:8px 14px;background:${bg};border:1.5px solid ${border};color:${color};font-family:monospace;font-size:12px;border-radius:6px;cursor:pointer;`;
+  b.onmouseenter=()=>b.style.opacity='0.8'; b.onmouseleave=()=>b.style.opacity='1';
+  b.onclick=onclick; parent.appendChild(b); return b;
+}
 
 // ════════════════════════════════════════════════════════════════
 //  MOBILE TOUCH — tap canvas to advance screens
@@ -1839,14 +2154,35 @@ function loop(ts) {
 }
 
 function loadLevels() {
-  if (window.GAME_LEVELS && window.GAME_LEVELS.length) {
-    LEVELS = window.GAME_LEVELS.map(l => { if (!l.powerups) l.powerups = []; return l; });
-  } else {
-    console.warn('levels.js not loaded or empty — no levels available');
-    LEVELS = [];
-  }
+  // Base levels from levels.js
+  const base = (window.GAME_LEVELS || []).map(l => ({ ...l, powerups: l.powerups||[], _custom: false }));
+  // Custom levels added by player (stored in localStorage)
+  const custom = loadCustomLevelsForPlay();
+  LEVELS = [...base, ...custom];
   try { unlockedUpTo = Math.min(parseInt(localStorage.getItem('cak_unlocked') || '0'), Math.max(0, LEVELS.length - 1)); } catch(e){}
   requestAnimationFrame(loop);
+}
+
+function loadCustomLevelsForPlay() {
+  try {
+    const saved = localStorage.getItem('cak_added_levels');
+    if (!saved) return [];
+    const parsed = JSON.parse(saved);
+    return parsed.map(l => ({ ...l, powerups: l.powerups||[], _custom: true }));
+  } catch(e) { return []; }
+}
+
+function saveCustomLevelsForPlay(levels) {
+  try { localStorage.setItem('cak_added_levels', JSON.stringify(levels)); } catch(e){}
+}
+
+function refreshLevels() {
+  // Called after adding/removing custom levels — rebuilds LEVELS and clamps progress
+  const base = (window.GAME_LEVELS || []).map(l => ({ ...l, powerups: l.powerups||[], _custom: false }));
+  const custom = loadCustomLevelsForPlay();
+  LEVELS = [...base, ...custom];
+  unlockedUpTo = Math.min(unlockedUpTo, Math.max(0, LEVELS.length - 1));
+  lsScroll = Math.max(0, lsMaxScroll());
 }
 
 loadLevels();
